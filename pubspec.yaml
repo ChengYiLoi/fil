@@ -21,6 +21,8 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  percent_indicator: "^2.1.7+2"
+  syncfusion_flutter_charts: ^18.3.53
   flutter:
     sdk: flutter
 

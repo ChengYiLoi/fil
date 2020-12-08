@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fil/constants.dart';
+import 'screens.dart';
 
 class LandingScreen extends StatefulWidget {
   @override
@@ -31,14 +32,14 @@ class _LandingScreenState extends State<LandingScreen> {
           SizedBox(
             width: screenWidth * buttonProportion,
             child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [BoxShadow(
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
                   color: Colors.black.withOpacity(0.25),
                   spreadRadius: 0,
                   blurRadius: 4,
-                  offset: Offset(0,4),
-                )]
-              ),
+                  offset: Offset(0, 4),
+                )
+              ]),
               margin: EdgeInsets.fromLTRB(0.0, 60.0, 0.0, 10.0),
               child: CupertinoButton(
                   padding: EdgeInsets.all(10.0),
@@ -49,7 +50,10 @@ class _LandingScreenState extends State<LandingScreen> {
                       Image.asset("images/email.png"),
                       Padding(
                         padding: const EdgeInsets.only(left: 30.0),
-                        child: Text('Continue with Email', style: TextStyle(color: Colors.black),),
+                        child: Text(
+                          'Continue with Email',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
                     ],
                   ),
@@ -59,14 +63,14 @@ class _LandingScreenState extends State<LandingScreen> {
           SizedBox(
             width: screenWidth * buttonProportion,
             child: Container(
-              decoration: BoxDecoration(
-                boxShadow: [BoxShadow(
+              decoration: BoxDecoration(boxShadow: [
+                BoxShadow(
                   color: Colors.black.withOpacity(0.25),
                   spreadRadius: 0,
                   blurRadius: 4,
-                  offset: Offset(0,4),
-                )]
-              ),
+                  offset: Offset(0, 4),
+                )
+              ]),
               margin: EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
               child: CupertinoButton(
                   padding: EdgeInsets.all(10.0),
@@ -77,11 +81,16 @@ class _LandingScreenState extends State<LandingScreen> {
                       Image.asset("images/google.png"),
                       Padding(
                         padding: const EdgeInsets.only(left: 30.0),
-                        child: Text('Continue with Google', style: TextStyle(color: Colors.black),),
+                        child: Text(
+                          'Continue with Google',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
                     ],
                   ),
-                  onPressed: () {/** */}),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => Dashboard()));
+                  }),
             ),
           ),
           Expanded(
