@@ -1,3 +1,5 @@
+import 'package:fil/components/navbarIcon.dart';
+import 'package:fil/services/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fil/constants.dart';
@@ -11,44 +13,50 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   bool isMetric = true;
+  int _pageIndex = 0;
+
+  final AuthService _auth = AuthService();
 
   List<BottomNavigationBarItem> navBarItems = [
     BottomNavigationBarItem(
         label: "Dashboard",
-        icon: Padding(
-          padding: navIconPadding,
-          child: Image.asset(
-            "images/graph.png",
-            color: navBarBlue,
-          ),
+        activeIcon: NavbarIcon(
+          url: "images/graph.png",
+          navBarColor: navBarBlue,
+        ),
+        icon: NavbarIcon(
+          url: "images/graph.png",
+          navBarColor: navBarGrey,
         )),
-        BottomNavigationBarItem(
+    BottomNavigationBarItem(
         label: "Reminders",
-        icon: Padding(
-          padding: navIconPadding,
-          child: Image.asset(
-            "images/reminder.png",
-            color: navBarGrey,
-          ),
+        activeIcon: NavbarIcon(
+          url: "images/reminder.png",
+          navBarColor: navBarBlue,
+        ),
+        icon: NavbarIcon(
+          url: "images/reminder.png",
+          navBarColor: navBarGrey,
         )),
     BottomNavigationBarItem(
         label: "Explore",
-        icon: Padding(
-          padding: navIconPadding,
-          child: Image.asset(
-            "images/map.png",
-            color: navBarGrey,
-          ),
+        activeIcon: NavbarIcon(
+          url: "images/map.png",
+          navBarColor: navBarBlue,
+        ),
+        icon: NavbarIcon(
+          url: "images/map.png",
+          navBarColor: navBarGrey,
         )),
     BottomNavigationBarItem(
-        label: "Recepies",
-        icon: Padding(
-          padding: navIconPadding,
-          child: Image.asset(
-            "images/recepie.png",
-            color: navBarGrey,
-          ),
-        )),
+      label: "Recepies",
+      activeIcon:
+          NavbarIcon(url: "images/recepie.png", navBarColor: navBarBlue),
+      icon: NavbarIcon(
+        url: "images/recepie.png",
+        navBarColor: navBarGrey,
+      ),
+    ),
     BottomNavigationBarItem(
         label: "Logout",
         icon: Padding(
@@ -285,19 +293,29 @@ class _DashboardState extends State<Dashboard> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CupertinoButton(
-                borderRadius: BorderRadius.circular(50.0),
-                  padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+                  borderRadius: BorderRadius.circular(50.0),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                   child: Image.asset("images/cup.png"),
                   color: Color(0xff88BDBC),
                   onPressed: () {}),
             )
-           
           ],
         ),
       )),
       bottomNavigationBar: CupertinoTabBar(
+        onTap: (val) {
+          if (val == 4) {
+            _auth.singOut();
+            Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+          } else {
+            setState(() {
+              _pageIndex = val;
+            });
+          }
+        },
         items: navBarItems,
-        currentIndex: 0,
+        currentIndex: _pageIndex,
         activeColor: Colors.black,
       ),
     );
