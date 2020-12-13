@@ -1,5 +1,6 @@
 import 'package:fil/screens/dashboard_screen.dart';
 import 'package:fil/services/auth.dart';
+import 'package:fil/services/validations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -42,8 +43,7 @@ class _SignupState extends State<Signup> {
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         child: TextFormField(
                           autofocus: true,
-                          validator: (val) =>
-                              val == "" ? "Email cannot be empty" : null,
+                          validator: (val) => validateEmail(val),
                           decoration: InputDecoration(
                             labelText: "Enter your Email",
                           ),
@@ -53,8 +53,7 @@ class _SignupState extends State<Signup> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: TextFormField(
-                          validator: (val) =>
-                              val == "" ? "Password cannot be empty" : null,
+                          validator: (val) => validatePassword(val),
                           decoration: InputDecoration(
                             labelText: "Enter your Password",
                           ),
@@ -72,7 +71,23 @@ class _SignupState extends State<Signup> {
                                     _emailInput.text, _passwordInput.text);
                                 if (result) {
                                   Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => Dashboard()));
+                                      builder: (context) => Dashboard(result)));
+                                } else {
+                                  return showDialog(
+                                    context: context,
+                                    builder: (context) => CupertinoAlertDialog(
+                                      content:
+                                          Text("Email has already been used"),
+                                      actions: [
+                                        CupertinoDialogAction(
+                                          child: Text("Ok"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(context);
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  );
                                 }
                               }
                               // dynamic result = await _auth.(

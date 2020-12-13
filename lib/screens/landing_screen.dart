@@ -1,7 +1,10 @@
 import 'package:fil/screens/signin_screen.dart';
+import 'package:fil/services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fil/constants.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'screens.dart';
 
 class LandingScreen extends StatefulWidget {
@@ -10,6 +13,8 @@ class LandingScreen extends StatefulWidget {
 }
 
 class _LandingScreenState extends State<LandingScreen> {
+  AuthService _auth = AuthService();
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -94,9 +99,11 @@ class _LandingScreenState extends State<LandingScreen> {
                         ),
                       ],
                     ),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Dashboard()));
+                    onPressed: () async {
+                      UserCredential user = await _auth.googleSignin();
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Dashboard(user)));
                     }),
               ),
             ),

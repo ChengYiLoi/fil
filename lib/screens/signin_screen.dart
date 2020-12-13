@@ -1,6 +1,7 @@
 import 'package:fil/screens/dashboard_screen.dart';
 import 'package:fil/screens/signup_screen.dart';
 import 'package:fil/services/auth.dart';
+import 'package:fil/services/validations.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -48,8 +49,10 @@ class _SignInState extends State<SignIn> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         child: TextFormField(
+                          validator: (val) => validateEmail(val),
                           decoration: InputDecoration(
                             labelText: "Enter your Email",
+                          
                           ),
                           autofocus: true,
                           controller: _emailInputController,
@@ -58,6 +61,7 @@ class _SignInState extends State<SignIn> {
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: TextFormField(
+                          validator: (val) => validatePassword(val),
                           decoration: InputDecoration(
                             labelText: "Enter your Password",
                           ),
@@ -68,14 +72,14 @@ class _SignInState extends State<SignIn> {
                           color: Colors.blueAccent,
                           child: Text("Sign In"),
                           onPressed: () async {
-                            dynamic result = await _auth.signIn(
+                            dynamic user = await _auth.signIn(
                                 _emailInputController.text,
                                 _passwordInputController.text);
-                            if (result == null) {
+                            if (user == null) {
                               print("Error signing in");
                             } else {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => Dashboard()));
+                                  builder: (context) => Dashboard(user)));
                             }
                           }),
                       Padding(
