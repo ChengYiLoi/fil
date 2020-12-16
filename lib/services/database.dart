@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fil/models/user.dart';
 
 class DatabaseService {
   //collection reference
@@ -7,16 +8,29 @@ class DatabaseService {
   final CollectionReference userDailyIntakesCollection =
       FirebaseFirestore.instance.collection("dailyIntakes");
 
-  Future<dynamic> queryUserData(String uid) async {
-    DocumentSnapshot doc = await userCollection.doc(uid).get();
-    if (doc.exists) {
-      print("document exist");
-      Map obj = doc.data();
-      obj['dailyIntakes'] = await getIntakeHistory(uid);
-      return obj;
+  Stream<UserObj> queryUserData(String uid) {
+    return userCollection.doc(uid).snapshots().map((snapshot) {
+      return UserObj(
+          snapshot.data()['creationTime'],
+          snapshot.data()['dailyGoal'],
+          snapshot.data()['dailyIntake'],
+          snapshot.data()['email'],
+          snapshot.data()['uid']);
+    });
+  }
+
+  // creates a new daily entry list
+  Future createNewEntry(
+      String uid, String now, Map<String, dynamic> obj) async {
+    obj[now] = {};
+    userDailyIntakesCollection.doc(uid).set(obj);
+  }
+
+  Future checkCurrentDate(String uid, String now) async {
+    DocumentSnapshot query = await userDailyIntakesCollection.doc(uid).get();
+    if (!query.data().containsKey(now)) {
+      createNewEntry(uid, now, query.data());
     }
-    print("document does not exist");
-    return "";
   }
 
   // create user data in the firestore db
@@ -28,32 +42,6 @@ class DatabaseService {
       "dailyGoal": 0,
       "dailyIntake": 0
     });
-  }
-
-  // get the user daily intake history
-  Future getIntakeHistory(String uid) async {
-    Map<String, dynamic> createDummy(int value, String type) {
-      DateTime current = new DateTime.now();
-      String dateTime = type == "s"
-          ? current.subtract(new Duration(days: value)).toIso8601String()
-          : current.add(new Duration(days: value)).toIso8601String();
-      return {"amount": "0", "dateTime": dateTime, "uid": uid};
-    }
-
-    QuerySnapshot query =
-        await userDailyIntakesCollection.where("uid", isEqualTo: uid).get();
-    List<Map<String, dynamic>> list =
-        query.docs.map((QueryDocumentSnapshot doc) {
-      return doc.data();
-    }).toList();
-    if (list.length < 3) {
-      list.insert(0, createDummy(2, "s"));
-      list.insert(1, createDummy(1, "s"));
-    }
-    list.add(createDummy(1, "a"));
-    list.add(createDummy(2, "a"));
-    print(list);
-    return list;
   }
 
   // Query if the user already exist in the db via uid
@@ -77,5 +65,13 @@ class DatabaseService {
       return true;
     }
     return false;
+  }
+
+  // updates the user daily goal
+  void editGoal(String uid, String value) {
+    userCollection.doc(uid).update({
+      "dailyGoal" : value
+    });
+
   }
 }

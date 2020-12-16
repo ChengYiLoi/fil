@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fil/components/navbarIcon.dart';
+import 'package:fil/models/user.dart';
 import 'package:fil/screens/screens.dart';
 import 'package:fil/services/auth.dart';
 import 'package:fil/services/database.dart';
@@ -7,13 +7,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fil/constants.dart';
+import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:fl_chart/fl_chart.dart';
 
 class Dashboard extends StatefulWidget {
-  final UserCredential userInfo;
+  // final UserCredential userInfo;
 
-  Dashboard(this.userInfo);
+  // Dashboard(this.userInfo);
   @override
   _DashboardState createState() => _DashboardState();
 }
@@ -21,7 +21,6 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   bool isMetric = true;
   int _pageIndex = 0;
-  Map<String, dynamic> _userObj;
 
   final AuthService _auth = AuthService();
   final DatabaseService _db = DatabaseService();
@@ -96,33 +95,21 @@ class _DashboardState extends State<Dashboard> {
     return months[obj.month - 1].toString();
   }
 
-  Future getUserData(String uid) async {
-    return await _db.queryUserData(uid);
-  }
-
   @override
   void initState() {
     super.initState();
   }
 
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: getUserData(widget.userInfo.user.uid),
+    return StreamBuilder(
+      // widget.userInfo.user.uid
+      stream: _db.queryUserData("BJSgTu0rpAfgZuywxpAwZq2GhX72"),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          _userObj = snapshot.data;
-          List<BarChartGroupData> barGroupsArray = [];
-          print(_userObj);
-
-          _userObj['dailyIntakes'].forEach((obj) {
-            DateTime date = DateTime.parse(obj['dateTime']);
-            print(date.weekday);
-            barGroupsArray.add(BarChartGroupData(x: date.weekday, barRods: [
-              BarChartRodData(
-                  y: double.parse(obj['amount']), colors: [Color(0xff2e80ec)])
-            ]));
-          });
-
+        if (snapshot.hasData) {
+          UserObj _userObj = snapshot.data;
+          final DateFormat formatter = DateFormat("yyyy-MM-dd");
+          String now = formatter.format(DateTime.now());
+          _db.checkCurrentDate(_userObj.userID, now);
           return Scaffold(
             body: SafeArea(
                 child: Padding(
@@ -151,15 +138,18 @@ class _DashboardState extends State<Dashboard> {
                       )
                     ],
                   ),
-                  CircularPercentIndicator(
-                    radius: 140.0,
-                    lineWidth: 15.0,
-                    percent: 0.5,
-                    center: Text(
-                      "",
-                      style: TextStyle(fontSize: 30),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 24.0),
+                    child: CircularPercentIndicator(
+                      radius: 260.0,
+                      lineWidth: 26.0,
+                      percent: _userObj.remainder,
+                      center: Text(
+                        "${(_userObj.remainder * 100).round().toString()}%",
+                        style: TextStyle(fontSize: 30),
+                      ),
+                      progressColor: Color(0xFF8FC1E3),
                     ),
-                    progressColor: Color(0xFF8FC1E3),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 17.0),
@@ -176,7 +166,7 @@ class _DashboardState extends State<Dashboard> {
                                 textAlign: TextAlign.start,
                               ),
                               Text(
-                                "${_userObj['dailyGoal']}ml",
+                                "${_userObj.daily_goal}ml",
                                 style: progressFontStyle.copyWith(
                                     color: progressBlue),
                               )
@@ -204,7 +194,7 @@ class _DashboardState extends State<Dashboard> {
                                 textAlign: TextAlign.start,
                               ),
                               Text(
-                                "${_userObj['dailyIntake']}ml",
+                                "${_userObj.daily_intake}ml",
                                 style: progressFontStyle.copyWith(
                                     color: progressBlue),
                               )
@@ -219,91 +209,52 @@ class _DashboardState extends State<Dashboard> {
                     child: CupertinoButton(
                         color: Color(0xFFF9B56A),
                         child: Text("Edit Goal"),
-                        onPressed: () {}),
-                  ),
-                  AspectRatio(
-                    aspectRatio: 1.7,
-                    child: Card(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4)),
-                      color: const Color(0xfff6F6F6),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 12.0),
-                        child: BarChart(
-                          BarChartData(
-                              alignment: BarChartAlignment.spaceEvenly,
-                              maxY: 6,
-                              axisTitleData: FlAxisTitleData(
-                                show: true,
-                                leftTitle: AxisTitle(
-                                    showTitle: true,
-                                    titleText: "Litres",
-                                    textAlign: TextAlign.end,
-                                    margin: 0),
-                              ),
-                              gridData: FlGridData(
-                                show: true,
-                                drawHorizontalLine: true,
-                                checkToShowHorizontalLine: (value) {
-                                  if (value == 3) {
-                                    return true;
-                                  }
-                                  return false;
-                                },
-                              ),
-                              titlesData: FlTitlesData(
-                                show: true,
-                                bottomTitles: SideTitles(
-                                  showTitles: true,
-                                  getTextStyles: (value) => TextStyle(
-                                    color: value == 3
-                                        ? Colors.black
-                                        : Color(0xffD5D5D5),
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                  margin: 20,
-                                  getTitles: (double value) {
-                                    switch (value.toInt()) {
-                                      case 1:
-                                        return "Mon";
-                                      case 2:
-                                        return "Tue";
-                                      case 3:
-                                        return "Wed";
-                                      case 4:
-                                        return "Thu";
-                                      case 5:
-                                        return "Fri";
-                                      case 6:
-                                        return "Sat";
-                                      case 7:
-                                        return "Sun";
-                                      default:
-                                        return '';
-                                    }
-                                  },
-                                ),
-                                leftTitles: SideTitles(
-                                  showTitles: true,
-                                ),
-                              ),
-                              borderData: FlBorderData(
-                                  show: true,
-                                  border: Border(
-                                    left: BorderSide(
-                                        width: 1.0, color: Colors.black),
-                                    bottom: BorderSide(
-                                        width: 1.0, color: Colors.black),
-                                  )),
-                              barGroups: barGroupsArray),
-                        ),
-                      ),
-                    ),
+                        onPressed: () {
+                          return showDialog(
+                              context: context,
+                              builder: (context) {
+                                int amount = 0;
+                                return StatefulBuilder(
+                                    builder: (context, setState) {
+                                  return AlertDialog(
+                                    content: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                            onPressed: () =>
+                                                setState(() => amount -= 50),
+                                            child: Icon(Icons.remove)),
+                                        Text("${amount.toString()}ml"),
+                                        ElevatedButton(
+                                            onPressed: () =>
+                                                setState(() => amount += 50),
+                                            child: Icon(Icons.add)),
+                                      ],
+                                    ),
+                                    actions: [
+                                      FlatButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: Text("Cancel"),
+                                      ),
+                                      FlatButton(
+                                          onPressed: () {
+                                            _db.editGoal(_userObj.userID,
+                                                amount.toString());
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text("Ok"))
+                                    ],
+                                  );
+                                });
+                              });
+                        }),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(32.0),
                     child: CupertinoButton(
                         borderRadius: BorderRadius.circular(50.0),
                         padding: EdgeInsets.symmetric(
@@ -338,10 +289,4 @@ class _DashboardState extends State<Dashboard> {
       },
     );
   }
-}
-
-class Sales {
-  final String year;
-  final int sales;
-  Sales(this.year, this.sales);
 }

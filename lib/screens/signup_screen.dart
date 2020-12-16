@@ -3,6 +3,7 @@ import 'package:fil/services/auth.dart';
 import 'package:fil/services/validations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -70,8 +71,8 @@ class _SignupState extends State<Signup> {
                                 dynamic result = await _auth.signUp(
                                     _emailInput.text, _passwordInput.text);
                                 if (result) {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => Dashboard(result)));
+                                  // Navigator.of(context).push(MaterialPageRoute(
+                                  //     builder: (context) => Dashboard(result)));
                                 } else {
                                   return showDialog(
                                     context: context,

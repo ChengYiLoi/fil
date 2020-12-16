@@ -102,8 +102,8 @@ class _LandingScreenState extends State<LandingScreen> {
                     onPressed: () async {
                       UserCredential user = await _auth.googleSignin();
 
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => Dashboard(user)));
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) => Dashboard(user)));
                     }),
               ),
             ),

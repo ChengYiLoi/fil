@@ -78,8 +78,8 @@ class _SignInState extends State<SignIn> {
                             if (user == null) {
                               print("Error signing in");
                             } else {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => Dashboard(user)));
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => Dashboard(user)));
                             }
                           }),
                       Padding(

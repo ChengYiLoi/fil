@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'screens/screens.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,9 +29,10 @@ class MyApp extends StatelessWidget {
               // closer together (more dense) than on mobile platforms.
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            initialRoute: "/",
+            initialRoute: "main",
             routes: {
               "/":(context) => LandingScreen(),
+              "main":(context) => Dashboard(),
             },
             
           );
