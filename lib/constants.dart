@@ -9,3 +9,7 @@ const TextStyle progressFontStyle =
     TextStyle(fontWeight: FontWeight.w900, fontSize: 30);
 
 const EdgeInsets navIconPadding = EdgeInsets.only(top: 7.0);
+
+const TextStyle popupButtonTextStyle = TextStyle(
+  color: Colors.white
+);

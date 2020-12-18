@@ -8,6 +8,10 @@ class DatabaseService {
   final CollectionReference userDailyIntakesCollection =
       FirebaseFirestore.instance.collection("dailyIntakes");
 
+  final String uid = "BJSgTu0rpAfgZuywxpAwZq2GhX72";
+
+  // final String uid;
+
   Stream<UserObj> queryUserData(String uid) {
     return userCollection.doc(uid).snapshots().map((snapshot) {
       return UserObj(
@@ -68,10 +72,14 @@ class DatabaseService {
   }
 
   // updates the user daily goal
-  void editGoal(String uid, String value) {
-    userCollection.doc(uid).update({
-      "dailyGoal" : value
-    });
+  void editGoal(int value) {
+    userCollection.doc(uid).update({"dailyGoal": value.toString()});
+  }
 
+  // updates to user daily intake
+  void addIntake(int value) {
+    userCollection.doc(uid).update({
+      "dailyIntake": FieldValue.arrayUnion([value.toString()])
+    });
   }
 }

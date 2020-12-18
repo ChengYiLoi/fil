@@ -34,6 +34,9 @@ class UserObj {
   }
 
   double get remainder {
+    if (int.parse(dailyGoal) < int.parse(daily_intake)) {
+      return 1.0;
+    }
     return (int.parse(daily_intake) / int.parse(dailyGoal));
   }
 }

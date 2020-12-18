@@ -1,9 +1,9 @@
 import 'package:fil/components/navbarIcon.dart';
+import 'package:fil/components/reusableAlertBox.dart';
 import 'package:fil/models/user.dart';
 import 'package:fil/screens/screens.dart';
 import 'package:fil/services/auth.dart';
 import 'package:fil/services/database.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fil/constants.dart';
@@ -23,6 +23,7 @@ class _DashboardState extends State<Dashboard> {
   int _pageIndex = 0;
 
   final AuthService _auth = AuthService();
+  // TODO add uid when db is initialzed
   final DatabaseService _db = DatabaseService();
 
   List<BottomNavigationBarItem> navBarItems = [
@@ -95,6 +96,17 @@ class _DashboardState extends State<Dashboard> {
     return months[obj.month - 1].toString();
   }
 
+  String dailyRemainder(UserObj user) {
+    int dailyGoal = int.parse(user.daily_goal);
+    int dailyIntake = int.parse(user.daily_intake);
+    int remainder;
+    if (dailyGoal >= dailyIntake) {
+      remainder = dailyGoal - dailyIntake;
+      return remainder.toString();
+    }
+    return "0";
+  }
+
   @override
   void initState() {
     super.initState();
@@ -110,6 +122,7 @@ class _DashboardState extends State<Dashboard> {
           final DateFormat formatter = DateFormat("yyyy-MM-dd");
           String now = formatter.format(DateTime.now());
           _db.checkCurrentDate(_userObj.userID, now);
+
           return Scaffold(
             body: SafeArea(
                 child: Padding(
@@ -141,6 +154,7 @@ class _DashboardState extends State<Dashboard> {
                   Padding(
                     padding: const EdgeInsets.only(top: 24.0),
                     child: CircularPercentIndicator(
+                      animation: true,
                       radius: 260.0,
                       lineWidth: 26.0,
                       percent: _userObj.remainder,
@@ -166,7 +180,7 @@ class _DashboardState extends State<Dashboard> {
                                 textAlign: TextAlign.start,
                               ),
                               Text(
-                                "${_userObj.daily_goal}ml",
+                                "${_userObj.daily_goal} ${isMetric ? "ml" : "oz"}",
                                 style: progressFontStyle.copyWith(
                                     color: progressBlue),
                               )
@@ -194,7 +208,7 @@ class _DashboardState extends State<Dashboard> {
                                 textAlign: TextAlign.start,
                               ),
                               Text(
-                                "${_userObj.daily_intake}ml",
+                                "${dailyRemainder(_userObj)} ${isMetric ? "ml" : "oz"}",
                                 style: progressFontStyle.copyWith(
                                     color: progressBlue),
                               )
@@ -205,63 +219,40 @@ class _DashboardState extends State<Dashboard> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 13.0),
+                    padding: const EdgeInsets.symmetric(vertical: 6.0),
                     child: CupertinoButton(
                         color: Color(0xFFF9B56A),
-                        child: Text("Edit Goal"),
+                        child: Text(
+                          "Edit Goal",
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
                         onPressed: () {
                           return showDialog(
                               context: context,
                               builder: (context) {
-                                int amount = 0;
-                                return StatefulBuilder(
-                                    builder: (context, setState) {
-                                  return AlertDialog(
-                                    content: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        ElevatedButton(
-                                            onPressed: () =>
-                                                setState(() => amount -= 50),
-                                            child: Icon(Icons.remove)),
-                                        Text("${amount.toString()}ml"),
-                                        ElevatedButton(
-                                            onPressed: () =>
-                                                setState(() => amount += 50),
-                                            child: Icon(Icons.add)),
-                                      ],
-                                    ),
-                                    actions: [
-                                      FlatButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: Text("Cancel"),
-                                      ),
-                                      FlatButton(
-                                          onPressed: () {
-                                            _db.editGoal(_userObj.userID,
-                                                amount.toString());
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text("Ok"))
-                                    ],
-                                  );
-                                });
+                                return ReusableAlertBox(
+                                  type: "edit",
+                                );
                               });
                         }),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(32.0),
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
                     child: CupertinoButton(
                         borderRadius: BorderRadius.circular(50.0),
                         padding: EdgeInsets.symmetric(
                             vertical: 16.0, horizontal: 16.0),
                         child: Image.asset("images/cup.png"),
                         color: Color(0xff88BDBC),
-                        onPressed: () {}),
+                        onPressed: () {
+                          return showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ReusableAlertBox(
+                                    type: "update");
+                              });
+                        }),
                   )
                 ],
               ),
