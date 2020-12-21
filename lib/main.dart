@@ -1,9 +1,33 @@
+import 'package:fil/screens/navigations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'screens/screens.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  const initializationSettingsAnroid =
+      AndroidInitializationSettings('app_icon');
+  final initializationSettingsIOS = IOSInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      onDidReceiveLocalNotification:
+          (int id, String title, String body, String payload) async {});
+
+  final initializationSettings = InitializationSettings(
+      android: initializationSettingsAnroid, iOS: initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+  });
+
   runApp(MyApp());
 }
 
@@ -29,12 +53,11 @@ class MyApp extends StatelessWidget {
               // closer together (more dense) than on mobile platforms.
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            initialRoute: "main",
+            initialRoute: "nav",
             routes: {
-              "/":(context) => LandingScreen(),
-              "main":(context) => Dashboard(),
+              "/": (context) => LandingScreen(),
+              "nav": (context) => Navigations(),
             },
-            
           );
         }
         return Text("Loading");

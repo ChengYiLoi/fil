@@ -82,4 +82,16 @@ class DatabaseService {
       "dailyIntake": FieldValue.arrayUnion([value.toString()])
     });
   }
+
+  Stream<List> queryReminders(String uid) {
+    return userCollection.doc(uid).snapshots().map((snapshot) {
+      
+      return snapshot.data()['reminders'];
+      // reminders.forEach((obj) {
+      //   result.add(Reminder(obj['time'], obj['amount']));
+      // });
+      // print(result);
+      
+    });
+  }
 }

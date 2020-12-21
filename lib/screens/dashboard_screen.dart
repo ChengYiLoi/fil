@@ -1,5 +1,4 @@
-import 'package:fil/components/navbarIcon.dart';
-import 'package:fil/components/reusableAlertBox.dart';
+import 'package:fil/components/components.dart';
 import 'package:fil/models/user.dart';
 import 'package:fil/screens/screens.dart';
 import 'package:fil/services/auth.dart';
@@ -74,6 +73,13 @@ class _DashboardState extends State<Dashboard> {
             "images/logout.png",
           ),
         )),
+  ];
+
+  List<Widget> navBarArray = [
+    Dashboard(),
+    Reminders(),
+    MapScreen(),
+    Recipe(),
   ];
 
   DateTime current = new DateTime.now();
@@ -249,30 +255,30 @@ class _DashboardState extends State<Dashboard> {
                           return showDialog(
                               context: context,
                               builder: (context) {
-                                return ReusableAlertBox(
-                                    type: "update");
+                                return ReusableAlertBox(type: "update");
                               });
                         }),
                   )
                 ],
               ),
             )),
-            bottomNavigationBar: CupertinoTabBar(
-              onTap: (val) {
-                if (val == 4) {
-                  _auth.singOut();
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/', (Route<dynamic> route) => false);
-                } else {
-                  setState(() {
-                    _pageIndex = val;
-                  });
-                }
-              },
-              items: navBarItems,
-              currentIndex: _pageIndex,
-              activeColor: Colors.black,
-            ),
+            
+            // bottomNavigationBar: CupertinoTabBar(
+            //   onTap: (val) {
+            //     if (val == 4) {
+            //       _auth.singOut();
+            //       Navigator.of(context).pushNamedAndRemoveUntil(
+            //           '/', (Route<dynamic> route) => false);
+            //     } else {
+            //       setState(() {
+            //         _pageIndex = val;
+            //       });
+            //     }
+            //   },
+            //   items: navBarItems,
+            //   currentIndex: _pageIndex,
+            //   activeColor: Colors.black,
+            // ),
           );
         } else {
           return CircularProgressIndicator();
