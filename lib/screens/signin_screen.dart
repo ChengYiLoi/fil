@@ -78,6 +78,7 @@ class _SignInState extends State<SignIn> {
                             if (user == null) {
                               print("Error signing in");
                             } else {
+                              // TODO add provider <User>
                               // Navigator.of(context).push(MaterialPageRoute(
                               //     builder: (context) => Dashboard(user)));
                             }

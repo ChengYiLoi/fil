@@ -12,13 +12,52 @@ class Reminders extends StatefulWidget {
 class _RemindersState extends State<Reminders> {
   bool isMetric = true;
   DatabaseService _db = DatabaseService();
+  String _time = "08:00";
+  String _amount;
 
   isAm(String time) {
     int hours = int.parse(time.split(":").sublist(0, 1).join(""));
-    if (hours >= 12) {
+    if (hours == 24) {
+      return true;
+    } else if (hours >= 12) {
       return false;
     }
     return true;
+  }
+
+  formatTime(Duration time) => time
+      .toString()
+      .split('.')
+      .first
+      .padLeft(8, "0")
+      .split("")
+      .sublist(0, 5)
+      .join("");
+
+  updateTime(dynamic val) {
+    _time = formatTime(val);
+  }
+
+  updateAmount(dynamic val) {
+    _amount = val;
+  }
+
+  bubbleSort(List reminders) {
+    bool isSorted = false;
+    while (!isSorted) {
+      isSorted = true;
+      for (var x = 0; x < reminders.length - 1; x++) {
+        var time1 = int.parse(reminders[x].getTime().split(":").first);
+        var time2 = int.parse(reminders[x + 1].getTime().split(":").first);
+        if (time1 > time2) {
+          var temp = reminders[x];
+          reminders[x] = reminders[x + 1];
+          reminders[x + 1] = temp;
+          isSorted = false;
+        }
+      }
+    }
+    return reminders;
   }
 
   Widget _addReminderDialog(context, double screenWidth) {
@@ -32,12 +71,15 @@ class _RemindersState extends State<Reminders> {
             child: Column(
               children: [
                 ReusableReminderInputCard(
-                  type: "time",
-                ),
-                ReusableReminderInputCard(type: "amount"),
+                    type: "time",
+                    onInputChange: (dynamic val) => updateTime(val)),
+                ReusableReminderInputCard(
+                    type: "amount",
+                    onInputChange: (dynamic val) => updateAmount(val)),
                 GestureDetector(
                   onTap: () {
-                    //TODO before upadting the reminders, do bubble sort
+                    _db.addReminder(_time, _amount);
+                    Navigator.of(context).pop();
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -53,7 +95,6 @@ class _RemindersState extends State<Reminders> {
                           "Add Reminder",
                           style: popupButtonTextStyle,
                         ),
-
                       ),
                     ),
                   ),
@@ -69,81 +110,82 @@ class _RemindersState extends State<Reminders> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-
     return StreamBuilder(
         stream: _db.queryReminders("BJSgTu0rpAfgZuywxpAwZq2GhX72"),
         builder: (context, snapshot) {
           List<ReusableReminderCard> _reminders = [];
           if (snapshot.hasData) {
-            List remindersArray = snapshot.data;
-            remindersArray.forEach((obj) {
+          
+            Map<String, dynamic> remindersObj = snapshot.data;
+            remindersObj.forEach((time, obj) {
               _reminders.add(ReusableReminderCard(
-                time: obj['time'],
+                time: time,
                 amount: obj['amount'],
-                isAm: isAm(obj['time']),
+                isAm: isAm(time),
+                isAlarm: obj['isAlarm'],
               ));
             });
+         
+            _reminders = bubbleSort(_reminders);
           }
-          return Scaffold(
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Column(
+                          children: [
+                            StatefulBuilder(
+                              builder: (context, setState) {
+                                return CupertinoSwitch(
+                                    value: isMetric,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        isMetric = !isMetric;
+                                      });
+                                    });
+                              },
+                            ),
+                            Text("${isMetric ? 'Metric' : 'Imperial'}")
+                          ],
+                        ),
+                      ],
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: _reminders,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Column(
-                            children: [
-                              StatefulBuilder(
-                                builder: (context, setState) {
-                                  return CupertinoSwitch(
-                                      value: isMetric,
-                                      onChanged: (bool value) {
-                                        setState(() {
-                                          isMetric = !isMetric;
-                                        });
-                                      });
-                                },
-                              ),
-                              Text("${isMetric ? 'Metric' : 'Imperial'}")
-                            ],
+                          FloatingActionButton(
+                            backgroundColor: Color(0xff88BDBC),
+                            onPressed: () {
+                              return showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return _addReminderDialog(
+                                        context, screenWidth);
+                                  });
+                            },
+                            child: Icon(Icons.add),
                           ),
                         ],
                       ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: _reminders,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            FloatingActionButton(
-                              backgroundColor: Color(0xff88BDBC),
-                              onPressed: () {
-                                return showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return _addReminderDialog(
-                                          context, screenWidth);
-                                    });
-                              },
-                              child: Icon(Icons.add),
-                            ),
-                          ],
-                        ),
-                      )
-                    ]),
-              ),
+                    )
+                  ]),
             ),
           );
         });

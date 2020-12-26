@@ -8,8 +8,7 @@ const Color navBarGrey = Color(0xFFD5D5D5);
 const TextStyle progressFontStyle =
     TextStyle(fontWeight: FontWeight.w900, fontSize: 30);
 
-const EdgeInsets navIconPadding = EdgeInsets.only(top: 7.0);
+const EdgeInsets navIconPadding =
+    EdgeInsets.symmetric(horizontal: 8.0);
 
-const TextStyle popupButtonTextStyle = TextStyle(
-  color: Colors.white
-);
+const TextStyle popupButtonTextStyle = TextStyle(color: Colors.white);

@@ -83,15 +83,31 @@ class DatabaseService {
     });
   }
 
-  Stream<List> queryReminders(String uid) {
+  // retrieves the user's reminders
+  Stream<Map<String, dynamic>> queryReminders(String uid) {
     return userCollection.doc(uid).snapshots().map((snapshot) {
-      
       return snapshot.data()['reminders'];
-      // reminders.forEach((obj) {
-      //   result.add(Reminder(obj['time'], obj['amount']));
-      // });
-      // print(result);
-      
     });
+  }
+
+  // add a new reminder
+  void addReminder(String time, String amount) {
+    userCollection.doc(uid).update({"reminders.$time": {
+      "amount" : amount,
+      "isAlarm" : false
+    }});
+  }
+
+  // updates the isAlarm boolean
+  void updateIsAlarm(String time, bool boolean) {
+    userCollection.doc(uid).update({"reminders.$time.isAlarm": boolean});
+  }
+
+  // update the reminder information
+  void updateReminder(String oldTime, String newTime, String amount) {
+    userCollection
+        .doc(uid)
+        .update({"reminders.$oldTime": FieldValue.delete()}).then(
+            (_) => addReminder(newTime, amount));
   }
 }

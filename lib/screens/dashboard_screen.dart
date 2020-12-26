@@ -25,56 +25,6 @@ class _DashboardState extends State<Dashboard> {
   // TODO add uid when db is initialzed
   final DatabaseService _db = DatabaseService();
 
-  List<BottomNavigationBarItem> navBarItems = [
-    BottomNavigationBarItem(
-        label: "Dashboard",
-        activeIcon: NavbarIcon(
-          url: "images/graph.png",
-          navBarColor: navBarBlue,
-        ),
-        icon: NavbarIcon(
-          url: "images/graph.png",
-          navBarColor: navBarGrey,
-        )),
-    BottomNavigationBarItem(
-        label: "Reminders",
-        activeIcon: NavbarIcon(
-          url: "images/reminder.png",
-          navBarColor: navBarBlue,
-        ),
-        icon: NavbarIcon(
-          url: "images/reminder.png",
-          navBarColor: navBarGrey,
-        )),
-    BottomNavigationBarItem(
-        label: "Explore",
-        activeIcon: NavbarIcon(
-          url: "images/map.png",
-          navBarColor: navBarBlue,
-        ),
-        icon: NavbarIcon(
-          url: "images/map.png",
-          navBarColor: navBarGrey,
-        )),
-    BottomNavigationBarItem(
-      label: "Recepies",
-      activeIcon:
-          NavbarIcon(url: "images/recepie.png", navBarColor: navBarBlue),
-      icon: NavbarIcon(
-        url: "images/recepie.png",
-        navBarColor: navBarGrey,
-      ),
-    ),
-    BottomNavigationBarItem(
-        label: "Logout",
-        icon: Padding(
-          padding: navIconPadding,
-          child: Image.asset(
-            "images/logout.png",
-          ),
-        )),
-  ];
-
   List<Widget> navBarArray = [
     Dashboard(),
     Reminders(),
@@ -262,23 +212,6 @@ class _DashboardState extends State<Dashboard> {
                 ],
               ),
             )),
-            
-            // bottomNavigationBar: CupertinoTabBar(
-            //   onTap: (val) {
-            //     if (val == 4) {
-            //       _auth.singOut();
-            //       Navigator.of(context).pushNamedAndRemoveUntil(
-            //           '/', (Route<dynamic> route) => false);
-            //     } else {
-            //       setState(() {
-            //         _pageIndex = val;
-            //       });
-            //     }
-            //   },
-            //   items: navBarItems,
-            //   currentIndex: _pageIndex,
-            //   activeColor: Colors.black,
-            // ),
           );
         } else {
           return CircularProgressIndicator();

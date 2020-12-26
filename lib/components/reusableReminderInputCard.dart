@@ -5,30 +5,48 @@ import 'package:flutter/services.dart';
 class ReusableReminderInputCard extends StatefulWidget {
   const ReusableReminderInputCard({
     @required this.type,
+    @required this.onInputChange,
+    this.time,
+    this.amount,
     Key key,
   }) : super(key: key);
   final String type;
+  final Function(dynamic) onInputChange;
+  final String time;
+  final String amount;
+
   @override
   _ReusableReminderInputCardState createState() =>
       _ReusableReminderInputCardState();
 }
 
 class _ReusableReminderInputCardState extends State<ReusableReminderInputCard> {
-  Duration _time = Duration(hours: 8, minutes: 0, seconds: 0);
-  String _amount = "0";
-  formatTime(Duration time) => time.toString().split('.').first.padLeft(8, "0");
-  showPicker(setState) {
+  String _amount = "";
+  Duration _time;
+  formatTime(Duration time) => time
+      .toString()
+      .split('.')
+      .first
+      .padLeft(8, "0")
+      .split("")
+      .sublist(0, 5)
+      .join("");
+
+  buildTimePicker(setState) {
     return CupertinoTimerPicker(
+      mode: CupertinoTimerPickerMode.hm,
       onTimerDurationChanged: (Duration value) {
         setState(() {
+        
           _time = value;
+          widget.onInputChange(value);
         });
       },
       initialTimerDuration: _time,
     );
   }
 
-  showTextField(setState) {
+  buildNumField(setState) {
     return TextField(
       keyboardType: TextInputType.number,
       inputFormatters: <TextInputFormatter>[
@@ -37,9 +55,26 @@ class _ReusableReminderInputCardState extends State<ReusableReminderInputCard> {
       onChanged: (value) {
         setState(() {
           _amount = value;
+          widget.onInputChange(value);
         });
       },
     );
+  }
+
+  convertTime(String time) {
+    int hours = int.parse(time.split(":").first);
+    int minutes = int.parse(time.split(":").last);
+
+    return Duration(hours: hours, minutes: minutes);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _time = widget.time == null
+        ? Duration(hours: 8, minutes: 0)
+        : convertTime(widget.time);
+    _amount = widget.amount == null ? "" : widget.amount;
   }
 
   @override
@@ -52,9 +87,10 @@ class _ReusableReminderInputCardState extends State<ReusableReminderInputCard> {
                 context: context,
                 builder: (context) {
                   return Container(
-                      height: 0.2 * screenHeight, child: showPicker(setState));
+                      height: 0.2 * screenHeight,
+                      child: buildTimePicker(setState));
                 })
-            : showTextField(setState);
+            : null;
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -85,9 +121,12 @@ class _ReusableReminderInputCardState extends State<ReusableReminderInputCard> {
                         ],
                         onChanged: (value) {
                           setState(() {
+                          
                             _amount = value;
+                            widget.onInputChange(value);
                           });
                         },
+                        initialValue: _amount,
                       )),
               ],
             ),

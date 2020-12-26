@@ -20,7 +20,7 @@ void main() async {
           (int id, String title, String body, String payload) async {});
 
   final initializationSettings = InitializationSettings(
-      android: initializationSettingsAnroid, iOS: initializationSettingsIOS);
+      initializationSettingsAnroid, initializationSettingsIOS);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
     if (payload != null) {
@@ -57,6 +57,7 @@ class MyApp extends StatelessWidget {
             routes: {
               "/": (context) => LandingScreen(),
               "nav": (context) => Navigations(),
+             
             },
           );
         }
