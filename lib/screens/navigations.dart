@@ -13,7 +13,7 @@ class Navigations extends StatefulWidget {
 
 class _NavigationsState extends State<Navigations> {
   AuthService _auth = AuthService();
-  int _pageIndex = 0;
+  int _pageIndex = 2;
 
   updateTab(int selectedIndex) {
     setState(() {
@@ -95,7 +95,7 @@ class _NavigationsState extends State<Navigations> {
           ),
         )),
   ];
-  List<Widget> _screens = [Dashboard(), Reminders()];
+  List<Widget> _screens = [Dashboard(), Reminders(), MapScreen()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
