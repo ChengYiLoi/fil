@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fil/models/user.dart';
+import 'package:fil/services/uploader.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DatabaseService {
   //collection reference
@@ -7,6 +11,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection("users");
   final CollectionReference userDailyIntakesCollection =
       FirebaseFirestore.instance.collection("dailyIntakes");
+  final CollectionReference markerCollection =
+      FirebaseFirestore.instance.collection("markers");
 
   final String uid = "BJSgTu0rpAfgZuywxpAwZq2GhX72";
 
@@ -92,10 +98,9 @@ class DatabaseService {
 
   // add a new reminder
   void addReminder(String time, String amount) {
-    userCollection.doc(uid).update({"reminders.$time": {
-      "amount" : amount,
-      "isAlarm" : false
-    }});
+    userCollection.doc(uid).update({
+      "reminders.$time": {"amount": amount, "isAlarm": false}
+    });
   }
 
   // updates the isAlarm boolean
@@ -110,4 +115,36 @@ class DatabaseService {
         .update({"reminders.$oldTime": FieldValue.delete()}).then(
             (_) => addReminder(newTime, amount));
   }
+
+  // delete reminder
+  void deleteReminder(String time) {
+    userCollection.doc(uid).update({"reminders.$time": FieldValue.delete()});
+  }
+
+  // returns the list of refill station's lat & lng
+  Stream getMarkers() {
+    return markerCollection.snapshots();
+  }
+
+  // Create marker
+  void createMarker(String description, LatLng location, File file) {
+    if (description == "") {
+      description = null;
+    }
+    markerCollection.add({
+      "description": description,
+      "lat": location.latitude,
+      "lng": location.longitude
+    }).then((value) {
+      String markerId = value.id;
+      Uploader uploader = Uploader(file: file, id: markerId);
+      uploader.uploadImage();
+    });
+  }
+
+  // Future <QuerySnapshot> getMarkerId(String id) {
+  //   return markerCollection.doc(id).get().then((DocumentSnapshot snapshot){
+
+  //   });
+  // }
 }

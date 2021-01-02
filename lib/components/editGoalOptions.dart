@@ -22,7 +22,7 @@ class EditGoalOptions extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
               decoration: BoxDecoration(
-                  color: Color(0xffF9B56A),
+                  color: buttonOrange,
                   borderRadius: BorderRadius.circular(10)),
               child: Text(
                 "Cancel",
@@ -36,7 +36,7 @@ class EditGoalOptions extends StatelessWidget {
             },
             child: Container(
                 decoration: BoxDecoration(
-                    color: Color(0xff8FC1E3),
+                    color: buttonBlue,
                     borderRadius: BorderRadius.circular(10)),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(

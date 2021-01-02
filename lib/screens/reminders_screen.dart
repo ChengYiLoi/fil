@@ -85,7 +85,7 @@ class _RemindersState extends State<Reminders> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Color(0xff8FC1E3),
+                        color: buttonBlue,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(

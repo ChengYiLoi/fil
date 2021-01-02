@@ -177,7 +177,7 @@ class _DashboardState extends State<Dashboard> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 6.0),
                     child: CupertinoButton(
-                        color: Color(0xFFF9B56A),
+                        color: buttonOrange,
                         child: Text(
                           "Edit Goal",
                           style: TextStyle(

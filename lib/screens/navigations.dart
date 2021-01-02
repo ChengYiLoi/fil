@@ -13,7 +13,7 @@ class Navigations extends StatefulWidget {
 
 class _NavigationsState extends State<Navigations> {
   AuthService _auth = AuthService();
-  int _pageIndex = 2;
+  int _pageIndex = 0;
 
   updateTab(int selectedIndex) {
     setState(() {
@@ -24,8 +24,8 @@ class _NavigationsState extends State<Navigations> {
   List<BottomNavigationBarItem> navBarItems = [
     BottomNavigationBarItem(
         label: "Dashboard",
-        activeIcon: Container(
-          margin: EdgeInsets.symmetric(horizontal:10, vertical: 4),
+        activeIcon: Padding(
+          padding: navIconPadding,
           child: NavbarIcon(
             url: "images/graph.png",
             navBarColor: navBarBlue,
@@ -68,16 +68,14 @@ class _NavigationsState extends State<Navigations> {
           child: NavbarIcon(
             url: "images/map.png",
             navBarColor: navBarGrey,
-            
           ),
         )),
     BottomNavigationBarItem(
       label: "Recepies",
-      activeIcon:
-          Padding(
-            padding: navIconPadding,
-            child: NavbarIcon(url: "images/recepie.png", navBarColor: navBarBlue),
-          ),
+      activeIcon: Padding(
+        padding: navIconPadding,
+        child: NavbarIcon(url: "images/recepie.png", navBarColor: navBarBlue),
+      ),
       icon: Padding(
         padding: navIconPadding,
         child: NavbarIcon(
@@ -87,28 +85,26 @@ class _NavigationsState extends State<Navigations> {
       ),
     ),
     BottomNavigationBarItem(
-        label: "Logout",
-        icon: Padding(
-          padding: navIconPadding,
-          child: Image.asset(
-            "images/logout.png",
-          ),
-        )),
+      label: "Logout",
+      icon: Padding(
+        padding: navIconPadding,
+        child: NavbarIcon(
+          url: "images/logout.png",
+        ),
+      ),
+    ),
   ];
   List<Widget> _screens = [Dashboard(), Reminders(), MapScreen()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: IndexedStack(
-        index: _pageIndex,
-        children: _screens,
-      ),
+      body: _screens[_pageIndex],
       bottomNavigationBar: BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: Colors.black,
-     unselectedFontSize: 10,
-      selectedFontSize: 10,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: Colors.black,
+        unselectedFontSize: 10,
+        selectedFontSize: 10,
         currentIndex: _pageIndex,
         onTap: updateTab,
         items: navBarItems,

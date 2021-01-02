@@ -60,29 +60,63 @@ class _EditReminderAlertBoxState extends State<EditReminderAlertBox> {
               onInputChange: (dynamic val) => updateAmount(val),
               amount: _amount,
             ),
-            GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              
-                _db.updateReminder(_oldTime, _time, _amount);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xff8FC1E3),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+
+                    _db.deleteReminder(_time);
+                  },
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16.0, horizontal: 24.0),
-                    child: Text(
-                      "Update Reminder",
-                      style: popupButtonTextStyle,
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Container(
+                      width: 150,
+                      decoration: BoxDecoration(
+                        color: buttonRed,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16.0, horizontal: 24.0),
+                        child: Center(
+                          child: Text(
+                            "Delete",
+                            style: popupButtonTextStyle,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _db.updateReminder(_oldTime, _time, _amount);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Container(
+                      width: 150,
+                      decoration: BoxDecoration(
+                        color: buttonBlue,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16.0, horizontal: 24.0),
+                        child: Center(
+                          child: Text(
+                            "Update",
+                            style: popupButtonTextStyle,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             )
           ],
         ),

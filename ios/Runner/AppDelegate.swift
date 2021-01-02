@@ -1,5 +1,6 @@
 import UIKit
 import Flutter
+import GoogleMaps
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -11,6 +12,7 @@ import Flutter
     if #available(iOS 10.0, *) {
   UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate
 }
+GMSServices.provideAPIKey("AIzaSyA_X2QcQ2oiNONAXrSFCMwvlL6bFQNzjJs")
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
