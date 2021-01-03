@@ -14,17 +14,23 @@ class DatabaseService {
   final CollectionReference markerCollection =
       FirebaseFirestore.instance.collection("markers");
 
+  final CollectionReference recipeCollection =
+      FirebaseFirestore.instance.collection("recipes");
+
   final String uid = "BJSgTu0rpAfgZuywxpAwZq2GhX72";
 
   // final String uid;
 
-  Stream<UserObj> queryUserData(String uid) {
+  Stream<UserObj> queryUserData() {
+    print("Query user stream");
     return userCollection.doc(uid).snapshots().map((snapshot) {
       return UserObj(
           snapshot.data()['creationTime'],
           snapshot.data()['dailyGoal'],
           snapshot.data()['dailyIntake'],
           snapshot.data()['email'],
+          snapshot.data()['recipeFavs'],
+          snapshot.data()['reminders'],
           snapshot.data()['uid']);
     });
   }
@@ -142,9 +148,21 @@ class DatabaseService {
     });
   }
 
-  // Future <QuerySnapshot> getMarkerId(String id) {
-  //   return markerCollection.doc(id).get().then((DocumentSnapshot snapshot){
+  // Retrieve recepies
+  Future<QuerySnapshot> getRecipes() {
+    print('get recipes ran');
+    return recipeCollection.orderBy('name').limit(6).get();
+  }
 
-  //   });
-  // }
+  // Retrieve additional recepies
+  Future<QuerySnapshot> getAdditionalRecipes(String id) {
+    return recipeCollection.orderBy('name').startAfter([id]).limit(6).get();
+  }
+
+  // Get the last recipe id (order by descending) so the pagination can check
+  // if the last recipe in the ui matches with the last recipe id in the DB
+  // if matches, the function to get additional recipes will not run
+  Future<QuerySnapshot> getLastRecipe() {
+    return recipeCollection.orderBy('name', descending: true).limit(1).get();
+  }
 }

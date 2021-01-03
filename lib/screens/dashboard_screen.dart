@@ -25,13 +25,6 @@ class _DashboardState extends State<Dashboard> {
   // TODO add uid when db is initialzed
   final DatabaseService _db = DatabaseService();
 
-  List<Widget> navBarArray = [
-    Dashboard(),
-    Reminders(),
-    MapScreen(),
-    Recipe(),
-  ];
-
   DateTime current = new DateTime.now();
 
   String getMonth(obj) {
@@ -71,7 +64,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     return StreamBuilder(
       // widget.userInfo.user.uid
-      stream: _db.queryUserData("BJSgTu0rpAfgZuywxpAwZq2GhX72"),
+      stream: _db.queryUserData(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           UserObj _userObj = snapshot.data;
@@ -214,7 +207,13 @@ class _DashboardState extends State<Dashboard> {
             )),
           );
         } else {
-          return CircularProgressIndicator();
+          return Scaffold(
+            body: Container(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
         }
       },
     );

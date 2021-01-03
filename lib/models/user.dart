@@ -1,19 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserObj {
-  String uid;
+  Timestamp creationTime;
   String dailyGoal;
   List dailyIntake;
-  Timestamp creationTime;
   String email;
+  List <dynamic> recipeFavs;
+  Map<String, dynamic> reminders;
+  String uid;
 
   UserObj(this.creationTime, this.dailyGoal, this.dailyIntake, this.email,
-      this.uid);
+      this.recipeFavs, this.reminders, this.uid);
 
   // update user daily goal
   // void updateUserGoal(int value) {
   //   this.dailyGoal = value.toString();
   // }
+
+  List<dynamic> get recipe_favs {
+    return recipeFavs;
+  }
 
   String get daily_intake {
     int total = 0;

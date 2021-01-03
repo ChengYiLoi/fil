@@ -21,6 +21,7 @@ class _NavigationsState extends State<Navigations> {
     });
   }
 
+
   List<BottomNavigationBarItem> navBarItems = [
     BottomNavigationBarItem(
         label: "Dashboard",
@@ -94,7 +95,7 @@ class _NavigationsState extends State<Navigations> {
       ),
     ),
   ];
-  List<Widget> _screens = [Dashboard(), Reminders(), MapScreen()];
+  List<Widget> _screens = [Dashboard(), Reminders(), MapScreen(), RecipesScreen()];
   @override
   Widget build(BuildContext context) {
     return Scaffold(

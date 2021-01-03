@@ -60,26 +60,27 @@ class _EditReminderAlertBoxState extends State<EditReminderAlertBox> {
               onInputChange: (dynamic val) => updateAmount(val),
               amount: _amount,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
 
-                    _db.deleteReminder(_time);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      _db.deleteReminder(_time);
+                    },
                     child: Container(
-                      width: 150,
+                      width: 120,
+                      height: 50,
                       decoration: BoxDecoration(
                         color: buttonRed,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 16.0, horizontal: 24.0),
+                            horizontal: 12.0, vertical: 12.0),
                         child: Center(
                           child: Text(
                             "Delete",
@@ -89,23 +90,21 @@ class _EditReminderAlertBoxState extends State<EditReminderAlertBox> {
                       ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _db.updateReminder(_oldTime, _time, _amount);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _db.updateReminder(_oldTime, _time, _amount);
+                    },
                     child: Container(
-                      width: 150,
+                      width: 120,
+                      height: 50,
                       decoration: BoxDecoration(
                         color: buttonBlue,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 16.0, horizontal: 24.0),
+                            horizontal: 12.0, vertical: 12.0),
                         child: Center(
                           child: Text(
                             "Update",
@@ -115,8 +114,8 @@ class _EditReminderAlertBoxState extends State<EditReminderAlertBox> {
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             )
           ],
         ),
