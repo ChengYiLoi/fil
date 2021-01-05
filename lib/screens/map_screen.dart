@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fil/components/components.dart';
+import 'package:fil/constants.dart';
 import 'package:fil/services/database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -150,6 +151,10 @@ class _MapScreenState extends State<MapScreen> {
           List<DocumentSnapshot> snapshots = snapshot.data.documents;
           renderMarkers(snapshots);
           return Scaffold(
+            appBar: AppBar(
+              backgroundColor: navBarBlue,
+              toolbarHeight: appBarHeight,
+            ),
             body: SafeArea(
               child: Stack(
                 children: [

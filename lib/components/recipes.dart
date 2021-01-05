@@ -34,12 +34,11 @@ class _RecipesState extends State<Recipes> {
     _controller.dispose();
   }
 
-  @override
   void _scrollListener() {
     print(_controller.position.extentAfter);
-    print(_cards.length);
     if (!isLoading && _controller.position.extentAfter == 0) {
       String id = _cards[_cards.length - 1].getId;
+      print("cards last id is $id");
       if (lastRecipeId != "") {
         if (id != lastRecipeId) {
           setState(() {
@@ -52,12 +51,16 @@ class _RecipesState extends State<Recipes> {
   }
 
   void getAdditionalData(String id) async {
+    print('query last id is $id');
     QuerySnapshot snapshot = await _db.getAdditionalRecipes(id);
     List<RecipeCard> newRecipeCards = [];
 
     List<DocumentSnapshot> documents = snapshot.docs;
 
-    documents.removeAt(0);
+    print('additional data length is ${documents.length}');
+    documents.forEach((element) {
+      print(element.id);
+    });
     documents.forEach((document) {
       newRecipeCards.add(
         RecipeCard(
@@ -65,7 +68,9 @@ class _RecipesState extends State<Recipes> {
           id: document.id,
           isFav: widget.recipeFavs.contains(
             document.id,
+
           ),
+          key: Key(document.id),
         ),
       );
     });
@@ -78,15 +83,18 @@ class _RecipesState extends State<Recipes> {
   }
 
   void _renderInitialCards(List<DocumentSnapshot> documents) {
+    print('render initial cards');
     List<RecipeCard> output = [];
-    documents.forEach((document) {
-      output.add(RecipeCard(
-        recipeObj: document.data(),
-        id: document.id,
-        isFav: widget.recipeFavs.contains(document.id),
-      ));
-    });
-    _cards.addAll(output);
+   
+      documents.forEach((document) {
+        output.add(RecipeCard(
+          recipeObj: document.data(),
+          id: document.id,
+          isFav: widget.recipeFavs.contains(document.id),
+          key: Key(document.id),
+        ));
+      });
+      _cards.addAll(output);
   }
 
   void getLastRecipeId() async {
@@ -97,6 +105,7 @@ class _RecipesState extends State<Recipes> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: initialRecipes,
@@ -109,21 +118,18 @@ class _RecipesState extends State<Recipes> {
             return Scaffold(
               body: SingleChildScrollView(
                 controller: _controller,
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Column(
-                    children: [
-                      Wrap(
-                        children: _cards,
-                      ),
-                      isLoading
-                          ? Padding(
-                              padding: const EdgeInsets.all(18),
-                              child: CircularProgressIndicator(),
-                            )
-                          : SizedBox()
-                    ],
-                  ),
+                child: Column(
+                  children: [
+                    Wrap(
+                      children: _cards,
+                    ),
+                    isLoading
+                        ? Padding(
+                            padding: const EdgeInsets.all(18),
+                            child: CircularProgressIndicator(),
+                          )
+                        : SizedBox()
+                  ],
                 ),
               ),
             );

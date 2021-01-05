@@ -111,11 +111,10 @@ class _RemindersState extends State<Reminders> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     return StreamBuilder(
-        stream: _db.queryReminders("BJSgTu0rpAfgZuywxpAwZq2GhX72"),
+        stream: _db.queryReminders(),
         builder: (context, snapshot) {
           List<ReusableReminderCard> _reminders = [];
           if (snapshot.hasData) {
-          
             Map<String, dynamic> remindersObj = snapshot.data;
             remindersObj.forEach((time, obj) {
               _reminders.add(ReusableReminderCard(
@@ -125,67 +124,73 @@ class _RemindersState extends State<Reminders> {
                 isAlarm: obj['isAlarm'],
               ));
             });
-         
+
             _reminders = bubbleSort(_reminders);
           }
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Column(
-                          children: [
-                            StatefulBuilder(
-                              builder: (context, setState) {
-                                return CupertinoSwitch(
-                                    value: isMetric,
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        isMetric = !isMetric;
-                                      });
-                                    });
-                              },
-                            ),
-                            Text("${isMetric ? 'Metric' : 'Imperial'}")
-                          ],
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: _reminders,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Row(
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: navBarBlue,
+              toolbarHeight: appBarHeight,
+            ),
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          FloatingActionButton(
-                            backgroundColor: Color(0xff88BDBC),
-                            onPressed: () {
-                              return showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return _addReminderDialog(
-                                        context, screenWidth);
-                                  });
-                            },
-                            child: Icon(Icons.add),
+                          Column(
+                            children: [
+                              StatefulBuilder(
+                                builder: (context, setState) {
+                                  return CupertinoSwitch(
+                                      value: isMetric,
+                                      onChanged: (bool value) {
+                                        setState(() {
+                                          isMetric = !isMetric;
+                                        });
+                                      });
+                                },
+                              ),
+                              Text("${isMetric ? 'Metric' : 'Imperial'}")
+                            ],
                           ),
                         ],
                       ),
-                    )
-                  ]),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: _reminders,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            FloatingActionButton(
+                              backgroundColor: Color(0xff88BDBC),
+                              onPressed: () {
+                                return showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return _addReminderDialog(
+                                          context, screenWidth);
+                                    });
+                              },
+                              child: Icon(Icons.add),
+                            ),
+                          ],
+                        ),
+                      )
+                    ]),
+              ),
             ),
           );
         });

@@ -19,6 +19,8 @@ class DatabaseService {
 
   final String uid = "BJSgTu0rpAfgZuywxpAwZq2GhX72";
 
+  DocumentSnapshot lastDocument;
+
   // final String uid;
 
   Stream<UserObj> queryUserData() {
@@ -96,7 +98,7 @@ class DatabaseService {
   }
 
   // retrieves the user's reminders
-  Stream<Map<String, dynamic>> queryReminders(String uid) {
+  Stream<Map<String, dynamic>> queryReminders() {
     return userCollection.doc(uid).snapshots().map((snapshot) {
       return snapshot.data()['reminders'];
     });
@@ -149,14 +151,27 @@ class DatabaseService {
   }
 
   // Retrieve recepies
-  Future<QuerySnapshot> getRecipes() {
+  Future<QuerySnapshot> getRecipes() async {
     print('get recipes ran');
-    return recipeCollection.orderBy('name').limit(6).get();
+
+    return await recipeCollection
+        .orderBy('name')
+        .limit(6)
+        .get()
+        .then((QuerySnapshot qSnapshot) {
+      List<DocumentSnapshot> documents = qSnapshot.docs;
+      lastDocument = documents[documents.length - 1];
+      return qSnapshot;
+    });
   }
 
   // Retrieve additional recepies
   Future<QuerySnapshot> getAdditionalRecipes(String id) {
-    return recipeCollection.orderBy('name').startAfter([id]).limit(6).get();
+    return recipeCollection
+        .orderBy('name')
+        .startAfterDocument(lastDocument)
+        .limit(6)
+        .get();
   }
 
   // Get the last recipe id (order by descending) so the pagination can check
@@ -164,5 +179,24 @@ class DatabaseService {
   // if matches, the function to get additional recipes will not run
   Future<QuerySnapshot> getLastRecipe() {
     return recipeCollection.orderBy('name', descending: true).limit(1).get();
+  }
+
+  // Retrieve recipes that are favourite by the user
+  Future<QuerySnapshot> getFavRecipes(List id) {
+    return recipeCollection.where(FieldPath.documentId, whereIn: id).get();
+  }
+
+  // Update the user favourite recipe
+  void updateFavRecipe(String id, String operation) {
+    if (operation == 'delete') {
+      userCollection.doc(uid).update({
+        "recipeFavs": FieldValue.arrayRemove([id])
+      });
+    } else {
+      userCollection.doc(uid).update({
+        "recipeFavs": FieldValue.arrayUnion([id])
+        
+      });
+    }
   }
 }

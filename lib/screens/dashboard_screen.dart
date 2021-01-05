@@ -73,6 +73,10 @@ class _DashboardState extends State<Dashboard> {
           _db.checkCurrentDate(_userObj.userID, now);
 
           return Scaffold(
+            appBar: AppBar(
+              backgroundColor: navBarBlue,
+              toolbarHeight: appBarHeight,
+            ),
             body: SafeArea(
                 child: Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),

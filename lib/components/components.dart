@@ -12,3 +12,7 @@ export 'markerDescriptionWindow.dart';
 export 'markerDescription.dart';
 export 'addMarker.dart';
 export 'cachedImageLoadingIndicator.dart';
+export 'ingredientList.dart';
+export 'instructionList.dart';
+export 'recipeListTile.dart';
+export 'favouriteRecipes.dart';
