@@ -1,9 +1,7 @@
-import 'package:fil/screens/dashboard_screen.dart';
 import 'package:fil/services/auth.dart';
 import 'package:fil/services/validations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class Signup extends StatefulWidget {
   @override

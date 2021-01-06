@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:day_night_time_picker/day_night_time_picker.dart';
 
 class ReusableReminderInputCard extends StatefulWidget {
   const ReusableReminderInputCard({
@@ -22,28 +23,18 @@ class ReusableReminderInputCard extends StatefulWidget {
 
 class _ReusableReminderInputCardState extends State<ReusableReminderInputCard> {
   String _amount = "";
-  Duration _time;
-  formatTime(Duration time) => time
-      .toString()
-      .split('.')
-      .first
-      .padLeft(8, "0")
-      .split("")
-      .sublist(0, 5)
-      .join("");
+  TimeOfDay _time;
 
-  buildTimePicker(setState) {
-    return CupertinoTimerPicker(
-      mode: CupertinoTimerPickerMode.hm,
-      onTimerDurationChanged: (Duration value) {
-        setState(() {
-        
-          _time = value;
-          widget.onInputChange(value);
-        });
-      },
-      initialTimerDuration: _time,
-    );
+  formatTime(TimeOfDay time) {
+    String hour = time.hour.toString();
+    String minute = time.minute.toString();
+    if (time.hour <= 9) {
+      hour = "0" + time.hour.toString();
+    }
+    if (time.minute <= 9) {
+      minute = "0" + time.minute.toString();
+    }
+    return (hour + ":" + minute);
   }
 
   buildNumField(setState) {
@@ -65,31 +56,31 @@ class _ReusableReminderInputCardState extends State<ReusableReminderInputCard> {
     int hours = int.parse(time.split(":").first);
     int minutes = int.parse(time.split(":").last);
 
-    return Duration(hours: hours, minutes: minutes);
+    return TimeOfDay(hour: hours, minute: minutes);
   }
 
   @override
   void initState() {
     super.initState();
-    _time = widget.time == null
-        ? Duration(hours: 8, minutes: 0)
-        : convertTime(widget.time);
+    _time = widget.time == null ? TimeOfDay.now() : convertTime(widget.time);
     _amount = widget.amount == null ? "" : widget.amount;
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
+    
     return GestureDetector(
       onTap: () {
         return widget.type == 'time'
-            ? showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return Container(
-                      height: 0.2 * screenHeight,
-                      child: buildTimePicker(setState));
-                })
+            ? Navigator.of(context).push(showPicker(
+                value: _time,
+                onChange: (TimeOfDay time) {
+                  widget.onInputChange(time);
+                  setState(() {
+                    _time = time;
+                  });
+                },
+              ))
             : null;
       },
       child: Padding(
@@ -121,7 +112,6 @@ class _ReusableReminderInputCardState extends State<ReusableReminderInputCard> {
                         ],
                         onChanged: (value) {
                           setState(() {
-                          
                             _amount = value;
                             widget.onInputChange(value);
                           });

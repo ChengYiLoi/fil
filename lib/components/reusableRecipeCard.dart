@@ -5,6 +5,7 @@ import 'package:fil/screens/recipe_screen.dart';
 import 'package:fil/services/database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RecipeCard extends StatefulWidget {
   final Map<String, dynamic> recipeObj;
@@ -44,7 +45,7 @@ class _RecipeCardState extends State<RecipeCard> {
   void initState() {
     super.initState();
     isFavIcon = widget.isFav;
-    _db = DatabaseService();
+    _db = Provider.of<DatabaseService>(context, listen: false);
     Reference ref = FirebaseStorage.instance
         .ref()
         .child("recipeImages/${widget.recipeObj['imageUrl']}.png");

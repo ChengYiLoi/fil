@@ -20,7 +20,7 @@ class _FavouriteRecipiesState extends State<FavouriteRecipies> {
   }
 
   _renderCards(List<QueryDocumentSnapshot> documents) {
-    List<RecipeCard> output = [];
+    
     _cards = [];
     documents.forEach((document) {
       _cards.add(RecipeCard(

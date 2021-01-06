@@ -2,6 +2,7 @@ import 'package:fil/components/reusableReminderInputCard.dart';
 import 'package:fil/constants.dart';
 import 'package:fil/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class EditReminderAlertBox extends StatefulWidget {
   final String time;
@@ -15,17 +16,20 @@ class _EditReminderAlertBoxState extends State<EditReminderAlertBox> {
   String _time;
   String _amount;
   String _oldTime;
-  String _oldAmount;
-  DatabaseService _db = DatabaseService();
-  formatTime(Duration time) => time
-      .toString()
-      .split(".")
-      .first
-      .padLeft(8, "0")
-      .split("")
-      .sublist(0, 5)
-      .join("");
-  updateTime(dynamic val) {
+
+  formatTime(TimeOfDay time) {
+    String hour = time.hour.toString();
+    String minute = time.minute.toString();
+    if (time.hour <= 9) {
+      hour = "0" + time.hour.toString();
+    }
+    if (time.minute <= 9) {
+      minute = "0" + time.minute.toString();
+    }
+    return (hour + ":" + minute);
+  }
+
+  updateTime(TimeOfDay val) {
     _time = formatTime(val);
   }
 
@@ -43,6 +47,7 @@ class _EditReminderAlertBoxState extends State<EditReminderAlertBox> {
 
   @override
   Widget build(BuildContext context) {
+    final DatabaseService _db = Provider.of(context, listen: false);
     double screenWidth = MediaQuery.of(context).size.width;
     return AlertDialog(
       contentPadding: EdgeInsets.symmetric(vertical: 10),

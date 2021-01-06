@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 
 class ReusableAlertBox extends StatefulWidget {
   const ReusableAlertBox({
-     @required this.type,
+    @required this.type,
     Key key,
   }) : super(key: key);
   final String type;
+
   @override
   _ReusableAlertBoxState createState() => _ReusableAlertBoxState();
 }
@@ -52,7 +53,9 @@ class _ReusableAlertBoxState extends State<ReusableAlertBox> {
             ),
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
-              child: widget.type == "edit" ? EditGoalOptions(amount: amount) : RecordGoalOptions(amount: amount),
+              child: widget.type == "edit"
+                  ? EditGoalOptions(amount: amount)
+                  : RecordGoalOptions(amount: amount),
             )
           ],
         ),

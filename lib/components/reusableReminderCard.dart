@@ -4,6 +4,7 @@ import 'package:fil/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:provider/provider.dart';
 
 class ReusableReminderCard extends StatefulWidget {
   const ReusableReminderCard({
@@ -27,9 +28,7 @@ class ReusableReminderCard extends StatefulWidget {
 }
 
 class _ReusableReminderCardState extends State<ReusableReminderCard> {
-  DatabaseService _db = DatabaseService();
-
-  void setAlarm(String time, String amount) async {
+  void setAlarm(String time, String amount, _db) async {
     int hour = int.parse(time.split(":").first);
     int minutes = int.parse(time.split(":").last);
     int id = int.parse(hour.toString() + minutes.toString());
@@ -57,7 +56,7 @@ class _ReusableReminderCardState extends State<ReusableReminderCard> {
     print("alarm is set, id is $id");
   }
 
-  void cancelAlarm(String time) async {
+  void cancelAlarm(String time, _db) async {
     int hour = int.parse(time.split(":").first);
     int minutes = int.parse(time.split(":").last);
     int id = int.parse(hour.toString() + minutes.toString());
@@ -79,19 +78,18 @@ class _ReusableReminderCardState extends State<ReusableReminderCard> {
     return time;
   }
 
-  _buildEditAlertBox(String time, String amount) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return EditReminderAlertBox(time: time, amount: amount,);
-        });
-  }
+
 
   @override
   Widget build(BuildContext context) {
+    final DatabaseService _db =
+        Provider.of<DatabaseService>(context, listen: false);
     bool isAlarm = widget.isAlarm;
     return GestureDetector(
-      onTap: () => _buildEditAlertBox(widget.time, widget.amount),
+      // onTap: () => _buildEditAlertBox(widget.time, widget.amount, _db),
+      onTap: () {
+        return _buildEditAlertBox(context, _db);
+      },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 5),
         decoration: BoxDecoration(
@@ -124,9 +122,9 @@ class _ReusableReminderCardState extends State<ReusableReminderCard> {
                       value: isAlarm,
                       onChanged: (bool value) {
                         if (value) {
-                          setAlarm(widget.time, widget.amount);
+                          setAlarm(widget.time, widget.amount, _db);
                         } else {
-                          cancelAlarm(widget.time);
+                          cancelAlarm(widget.time, _db);
                         }
                         setState(() {
                           isAlarm = !isAlarm;
@@ -139,5 +137,18 @@ class _ReusableReminderCardState extends State<ReusableReminderCard> {
         ),
       ),
     );
+  }
+
+  _buildEditAlertBox(BuildContext context, DatabaseService _db) {
+    return showDialog(
+          context: context,
+          builder: (context) {
+            return ChangeNotifierProvider.value(
+                value: _db,
+                child: EditReminderAlertBox(
+                  time: widget.time,
+                  amount: widget.amount,
+                ));
+          });
   }
 }

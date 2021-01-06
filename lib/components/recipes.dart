@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fil/components/reusableRecipeCard.dart';
 import 'package:fil/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Recipes extends StatefulWidget {
   final List<dynamic> recipeFavs;
@@ -12,16 +13,17 @@ class Recipes extends StatefulWidget {
 }
 
 class _RecipesState extends State<Recipes> {
-  DatabaseService _db = DatabaseService();
   ScrollController _controller;
   List<RecipeCard> _cards;
   Future<QuerySnapshot> initialRecipes;
   bool isLoading;
   String lastRecipeId;
+  DatabaseService _db;
 
   @override
   void initState() {
     super.initState();
+    _db = Provider.of(context, listen: false);
     _cards = [];
     _controller = ScrollController()..addListener(_scrollListener);
     initialRecipes = _db.getRecipes();
@@ -68,7 +70,6 @@ class _RecipesState extends State<Recipes> {
           id: document.id,
           isFav: widget.recipeFavs.contains(
             document.id,
-
           ),
           key: Key(document.id),
         ),
@@ -85,16 +86,16 @@ class _RecipesState extends State<Recipes> {
   void _renderInitialCards(List<DocumentSnapshot> documents) {
     print('render initial cards');
     List<RecipeCard> output = [];
-   
-      documents.forEach((document) {
-        output.add(RecipeCard(
-          recipeObj: document.data(),
-          id: document.id,
-          isFav: widget.recipeFavs.contains(document.id),
-          key: Key(document.id),
-        ));
-      });
-      _cards.addAll(output);
+
+    documents.forEach((document) {
+      output.add(RecipeCard(
+        recipeObj: document.data(),
+        id: document.id,
+        isFav: widget.recipeFavs.contains(document.id),
+        key: Key(document.id),
+      ));
+    });
+    _cards.addAll(output);
   }
 
   void getLastRecipeId() async {

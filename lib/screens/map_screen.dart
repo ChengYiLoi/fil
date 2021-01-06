@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:provider/provider.dart';
 
 class MapScreen extends StatefulWidget {
   @override
@@ -14,7 +14,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  DatabaseService _db = DatabaseService();
   double infoWindowPosition;
   double createMarkerinfoWindowPosition;
   double descriptionWindowPosition;
@@ -102,8 +101,9 @@ class _MapScreenState extends State<MapScreen> {
           position: LatLng(snapshot.data()['lat'], snapshot.data()['lng']),
           icon: mapMarker,
           onTap: () async {
-            Reference ref =
-                FirebaseStorage.instance.ref().child("markerImages/${snapshot.id}");
+            Reference ref = FirebaseStorage.instance
+                .ref()
+                .child("markerImages/${snapshot.id}");
             await ref.getDownloadURL().then((String url) {
               print('image url obtained');
               print(url);
@@ -143,7 +143,15 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    mapController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final DatabaseService _db =
+        Provider.of<DatabaseService>(context, listen: false);
     return StreamBuilder(
       stream: _db.getMarkers(),
       builder: (context, snapshot) {
@@ -249,7 +257,3 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 }
-
-
-
-

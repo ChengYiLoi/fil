@@ -1,5 +1,4 @@
 import 'package:fil/screens/navigations.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'screens/screens.dart';
@@ -53,7 +52,7 @@ class MyApp extends StatelessWidget {
               // closer together (more dense) than on mobile platforms.
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
-            initialRoute: "nav",
+            initialRoute: "/",
             routes: {
               "/": (context) => LandingScreen(),
               "nav": (context) => Navigations(),

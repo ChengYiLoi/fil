@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fil/models/user.dart';
 import 'package:fil/services/uploader.dart';
+import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-class DatabaseService {
+class DatabaseService with ChangeNotifier {
   //collection reference
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection("users");
@@ -17,9 +18,15 @@ class DatabaseService {
   final CollectionReference recipeCollection =
       FirebaseFirestore.instance.collection("recipes");
 
-  final String uid = "BJSgTu0rpAfgZuywxpAwZq2GhX72";
+  final String uid;
+
+  DatabaseService({this.uid});
 
   DocumentSnapshot lastDocument;
+
+  getUid() {
+    return this.uid;
+  }
 
   // final String uid;
 
@@ -195,7 +202,6 @@ class DatabaseService {
     } else {
       userCollection.doc(uid).update({
         "recipeFavs": FieldValue.arrayUnion([id])
-        
       });
     }
   }

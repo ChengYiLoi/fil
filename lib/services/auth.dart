@@ -1,13 +1,19 @@
-import 'package:fil/models/user.dart';
+import 'dart:async';
 import 'package:fil/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  // create user obj base on FirebaseUser
+  // Check if user has already signed in
+  StreamSubscription isUserSignedIn() {
+    return _auth.userChanges().listen((User user) {
+      return user;
+    });
+  }
 
   // sign in with email & password
 

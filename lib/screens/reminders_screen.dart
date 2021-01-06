@@ -3,6 +3,7 @@ import 'package:fil/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fil/components/components.dart';
+import 'package:provider/provider.dart';
 
 class Reminders extends StatefulWidget {
   @override
@@ -11,7 +12,6 @@ class Reminders extends StatefulWidget {
 
 class _RemindersState extends State<Reminders> {
   bool isMetric = true;
-  DatabaseService _db = DatabaseService();
   String _time = "08:00";
   String _amount;
 
@@ -25,16 +25,20 @@ class _RemindersState extends State<Reminders> {
     return true;
   }
 
-  formatTime(Duration time) => time
-      .toString()
-      .split('.')
-      .first
-      .padLeft(8, "0")
-      .split("")
-      .sublist(0, 5)
-      .join("");
+  formatTime(TimeOfDay time) {
+    String hour = time.hour.toString();
+    String minute = time.minute.toString();
+      if (time.hour <= 9) {
+      hour = "0" + time.hour.toString();
+    }
+    if (time.minute <= 9) {
+      minute = "0" + time.minute.toString();
+    }
+    
+    return (hour + ":" + minute);
+  }
 
-  updateTime(dynamic val) {
+  updateTime(TimeOfDay val) {
     _time = formatTime(val);
   }
 
@@ -60,7 +64,7 @@ class _RemindersState extends State<Reminders> {
     return reminders;
   }
 
-  Widget _addReminderDialog(context, double screenWidth) {
+  Widget _addReminderDialog(context, double screenWidth, _db) {
     return StatefulBuilder(
       builder: (context, setState) {
         return AlertDialog(
@@ -109,6 +113,7 @@ class _RemindersState extends State<Reminders> {
 
   @override
   Widget build(BuildContext context) {
+    final DatabaseService _db = Provider.of<DatabaseService>(context, listen: false);
     double screenWidth = MediaQuery.of(context).size.width;
     return StreamBuilder(
         stream: _db.queryReminders(),
@@ -181,7 +186,7 @@ class _RemindersState extends State<Reminders> {
                                     context: context,
                                     builder: (context) {
                                       return _addReminderDialog(
-                                          context, screenWidth);
+                                          context, screenWidth, _db);
                                     });
                               },
                               child: Icon(Icons.add),

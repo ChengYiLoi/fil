@@ -1,6 +1,7 @@
 import 'package:fil/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:fil/constants.dart';
+import 'package:provider/provider.dart';
 
 class EditGoalOptions extends StatelessWidget {
   const EditGoalOptions({
@@ -11,7 +12,7 @@ class EditGoalOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DatabaseService _db = DatabaseService();
+    final DatabaseService _db = Provider.of<DatabaseService>(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -22,8 +23,7 @@ class EditGoalOptions extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
               decoration: BoxDecoration(
-                  color: buttonOrange,
-                  borderRadius: BorderRadius.circular(10)),
+                  color: buttonOrange, borderRadius: BorderRadius.circular(10)),
               child: Text(
                 "Cancel",
                 style: popupButtonTextStyle,
@@ -31,13 +31,13 @@ class EditGoalOptions extends StatelessWidget {
         ),
         GestureDetector(
             onTap: () {
+              
               _db.editGoal(amount);
               Navigator.of(context).pop();
             },
             child: Container(
                 decoration: BoxDecoration(
-                    color: buttonBlue,
-                    borderRadius: BorderRadius.circular(10)),
+                    color: buttonBlue, borderRadius: BorderRadius.circular(10)),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                       vertical: 8.0, horizontal: 24.0),

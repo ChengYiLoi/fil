@@ -1,11 +1,11 @@
+import 'package:fil/screens/navigations.dart';
 import 'package:fil/screens/signin_screen.dart';
 import 'package:fil/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fil/constants.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'screens.dart';
+
 
 class LandingScreen extends StatefulWidget {
   @override
@@ -14,6 +14,30 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen> {
   AuthService _auth = AuthService();
+
+  isUserLoggedIn() {
+    _auth.isUserSignedIn().onData((user) {
+      if (user != null) {
+        print('user has logged in');
+        print('user id is ${user.uid}');
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => Navigations(
+              uid: user.uid,
+            ),
+          ),
+        );
+      } else {
+        print('user has not signed in');
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    isUserLoggedIn();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,9 +125,9 @@ class _LandingScreenState extends State<LandingScreen> {
                     ),
                     onPressed: () async {
                       UserCredential user = await _auth.googleSignin();
-
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) => Dashboard(user)));
+                   
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => Navigations(uid: user.user.uid,)));
                     }),
               ),
             ),

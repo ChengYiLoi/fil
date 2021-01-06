@@ -1,30 +1,20 @@
 import 'package:fil/components/components.dart';
 import 'package:fil/models/user.dart';
-import 'package:fil/screens/screens.dart';
-import 'package:fil/services/auth.dart';
 import 'package:fil/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fil/constants.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
-  // final UserCredential userInfo;
-
-  // Dashboard(this.userInfo);
   @override
   _DashboardState createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
   bool isMetric = true;
-  int _pageIndex = 0;
-
-  final AuthService _auth = AuthService();
-  // TODO add uid when db is initialzed
-  final DatabaseService _db = DatabaseService();
-
   DateTime current = new DateTime.now();
 
   String getMonth(obj) {
@@ -62,6 +52,8 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget build(BuildContext context) {
+    final DatabaseService _db =
+        Provider.of<DatabaseService>(context, listen: false);
     return StreamBuilder(
       // widget.userInfo.user.uid
       stream: _db.queryUserData(),
@@ -184,8 +176,11 @@ class _DashboardState extends State<Dashboard> {
                           return showDialog(
                               context: context,
                               builder: (context) {
-                                return ReusableAlertBox(
-                                  type: "edit",
+                                return ChangeNotifierProvider.value(
+                                  value: _db,
+                                  child: ReusableAlertBox(
+                                    type: "edit",
+                                  ),
                                 );
                               });
                         }),
@@ -202,7 +197,9 @@ class _DashboardState extends State<Dashboard> {
                           return showDialog(
                               context: context,
                               builder: (context) {
-                                return ReusableAlertBox(type: "update");
+                                return ChangeNotifierProvider.value(
+                                    value: _db,
+                                    child: ReusableAlertBox(type: "update"));
                               });
                         }),
                   )

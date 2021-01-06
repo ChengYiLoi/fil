@@ -1,12 +1,16 @@
 import 'package:fil/components/navbarIcon.dart';
 import 'package:fil/screens/screens.dart';
 import 'package:fil/services/auth.dart';
+import 'package:fil/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../constants.dart';
 
 class Navigations extends StatefulWidget {
+  final String uid;
+  Navigations({this.uid});
   @override
   _NavigationsState createState() => _NavigationsState();
 }
@@ -14,13 +18,18 @@ class Navigations extends StatefulWidget {
 class _NavigationsState extends State<Navigations> {
   AuthService _auth = AuthService();
   int _pageIndex = 0;
+  List<dynamic> _screens;
 
   updateTab(int selectedIndex) {
-    setState(() {
-      _pageIndex = selectedIndex;
-    });
+    if (selectedIndex != 4) {
+      setState(() {
+        _pageIndex = selectedIndex;
+      });
+    } else {
+      _auth.singOut();
+      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+    }
   }
-
 
   List<BottomNavigationBarItem> navBarItems = [
     BottomNavigationBarItem(
@@ -95,12 +104,28 @@ class _NavigationsState extends State<Navigations> {
       ),
     ),
   ];
-  List<Widget> _screens = [Dashboard(), Reminders(), MapScreen(), RecipesScreen()];
+
+  @override
+  void initState() {
+    super.initState();
+    _screens = [
+      Dashboard(),
+      Reminders(),
+      MapScreen(),
+      RecipesScreen(),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: _screens[_pageIndex],
+      body: Container(
+        child: ChangeNotifierProvider(
+          create: (_) => DatabaseService(uid: widget.uid),
+                  child: _screens[_pageIndex],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.black,

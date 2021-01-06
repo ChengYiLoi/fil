@@ -1,5 +1,6 @@
 import 'package:fil/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../constants.dart';
 
 class RecordGoalOptions extends StatelessWidget {
@@ -10,7 +11,7 @@ class RecordGoalOptions extends StatelessWidget {
   final int amount;
   @override
   Widget build(BuildContext context) {
-    DatabaseService _db = DatabaseService();
+    final DatabaseService _db = Provider.of<DatabaseService>(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
