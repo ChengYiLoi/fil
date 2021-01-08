@@ -18,10 +18,12 @@ class AuthService {
   // sign in with email & password
 
   Future signIn(String email, String password) async {
+    email = email.replaceAll(" ", "");
+    password = password.replaceAll(" ", "");
     try {
-      dynamic result = await _auth.signInWithEmailAndPassword(
+      UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      dynamic user = result.user;
+      User user = result.user;
       return user;
     } catch (e) {
       print(e.toString());
@@ -60,13 +62,13 @@ class AuthService {
       return false;
     } else {
       try {
-        UserCredential result = await _auth.createUserWithEmailAndPassword(
+        UserCredential userCred = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        User user = result.user;
+        User user = userCred.user;
         // UserObj userObj = UserObj(uid: user.uid, email: user.email);
         await DatabaseService()
             .createUserData(user.uid, user.email, user.metadata.creationTime);
-        return result;
+        return user;
       } catch (e) {
         print(e.toString());
       }

@@ -12,12 +12,14 @@ class ReusableReminderCard extends StatefulWidget {
     @required this.amount,
     @required this.isAm,
     @required this.isAlarm,
+    @required this.isMetric,
     Key key,
   }) : super(key: key);
   final String time;
   final String amount;
   final bool isAm;
   final bool isAlarm;
+  final bool isMetric;
 
   String getTime() {
     return this.time;
@@ -28,12 +30,11 @@ class ReusableReminderCard extends StatefulWidget {
 }
 
 class _ReusableReminderCardState extends State<ReusableReminderCard> {
+  final double conversion = 29.574;
   void setAlarm(String time, String amount, _db) async {
     int hour = int.parse(time.split(":").first);
     int minutes = int.parse(time.split(":").last);
     int id = int.parse(hour.toString() + minutes.toString());
-    print(hour);
-    print(minutes);
     Time scheduledNotificationTime = Time(hour, minutes, 0);
     _db.updateIsAlarm(time, true);
     var androidDetails = new AndroidNotificationDetails(
@@ -50,7 +51,7 @@ class _ReusableReminderCardState extends State<ReusableReminderCard> {
     await flutterLocalNotificationsPlugin.showDailyAtTime(
         id,
         "Fil Daily Hydration Reminder",
-        "It is time to drink $amount of water!",
+        "It is time to hydrate yourself with ${(int.parse(widget.amount) / (widget.isMetric ? 1 : conversion)).round()} ${widget.isMetric ? "ml" : "oz"} of water!",
         scheduledNotificationTime,
         generalNotificationDetails);
     print("alarm is set, id is $id");
@@ -77,8 +78,6 @@ class _ReusableReminderCardState extends State<ReusableReminderCard> {
     }
     return time;
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +109,7 @@ class _ReusableReminderCardState extends State<ReusableReminderCard> {
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      "Amount: ${widget.amount}",
+                      "Amount: ${(int.parse(widget.amount) / (widget.isMetric ? 1 : conversion)).round()} ${widget.isMetric ? "ml" : "oz"}",
                       style: TextStyle(fontSize: 14),
                     ),
                   )
@@ -122,6 +121,7 @@ class _ReusableReminderCardState extends State<ReusableReminderCard> {
                       value: isAlarm,
                       onChanged: (bool value) {
                         if (value) {
+                          print('alaram is set for ${widget.time}');
                           setAlarm(widget.time, widget.amount, _db);
                         } else {
                           cancelAlarm(widget.time, _db);
@@ -141,14 +141,14 @@ class _ReusableReminderCardState extends State<ReusableReminderCard> {
 
   _buildEditAlertBox(BuildContext context, DatabaseService _db) {
     return showDialog(
-          context: context,
-          builder: (context) {
-            return ChangeNotifierProvider.value(
-                value: _db,
-                child: EditReminderAlertBox(
-                  time: widget.time,
-                  amount: widget.amount,
-                ));
-          });
+        context: context,
+        builder: (context) {
+          return ChangeNotifierProvider.value(
+              value: _db,
+              child: EditReminderAlertBox(
+                time: widget.time,
+                amount: widget.amount,
+              ));
+        });
   }
 }

@@ -50,7 +50,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
               ),
               body: TabBarView(children: [
                 Recipes(
-                  recipeFavs: _userObj.recipe_favs,
+                  recipeFavs: _userObj.recipeFavs,
                 ),
                 FavouriteRecipies(
                   recipeFavs: _userObj.recipeFavs,

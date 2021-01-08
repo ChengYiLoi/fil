@@ -159,10 +159,10 @@ class _MapScreenState extends State<MapScreen> {
           List<DocumentSnapshot> snapshots = snapshot.data.documents;
           renderMarkers(snapshots);
           return Scaffold(
-            appBar: AppBar(
-              backgroundColor: navBarBlue,
-              toolbarHeight: appBarHeight,
-            ),
+            // appBar: AppBar(
+            //   backgroundColor: navBarBlue,
+            //   toolbarHeight: appBarHeight,
+            // ),
             body: SafeArea(
               child: Stack(
                 children: [
@@ -228,6 +228,11 @@ class _MapScreenState extends State<MapScreen> {
                                   onSubmit: _removeTempMarker,
                                 );
                               });
+                          setState(() {
+                              _markers.removeWhere(
+                            (Marker marker) => marker.markerId.value == "temp");
+                            createMarkerinfoWindowPosition = -100;
+                          });
                         },
                         child: Container(
                           padding: EdgeInsets.all(12.0),

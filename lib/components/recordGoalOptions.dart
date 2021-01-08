@@ -1,5 +1,6 @@
 import 'package:fil/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../constants.dart';
 
@@ -12,6 +13,8 @@ class RecordGoalOptions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DatabaseService _db = Provider.of<DatabaseService>(context);
+    final DateFormat formatter = DateFormat("yyyy-MM-dd");
+    String now = formatter.format(DateTime.now());
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -31,7 +34,7 @@ class RecordGoalOptions extends StatelessWidget {
         ),
         GestureDetector(
             onTap: () {
-              _db.addIntake(amount);
+              _db.addIntake(amount, now);
               Navigator.of(context).pop();
             },
             child: Container(

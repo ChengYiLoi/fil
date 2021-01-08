@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fil/constants.dart';
 import 'package:fil/services/database.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,13 +29,13 @@ class _RemindersState extends State<Reminders> {
   formatTime(TimeOfDay time) {
     String hour = time.hour.toString();
     String minute = time.minute.toString();
-      if (time.hour <= 9) {
+    if (time.hour <= 9) {
       hour = "0" + time.hour.toString();
     }
     if (time.minute <= 9) {
       minute = "0" + time.minute.toString();
     }
-    
+
     return (hour + ":" + minute);
   }
 
@@ -113,91 +114,102 @@ class _RemindersState extends State<Reminders> {
 
   @override
   Widget build(BuildContext context) {
-    final DatabaseService _db = Provider.of<DatabaseService>(context, listen: false);
+    final DatabaseService _db =
+        Provider.of<DatabaseService>(context, listen: false);
     double screenWidth = MediaQuery.of(context).size.width;
     return StreamBuilder(
         stream: _db.queryReminders(),
         builder: (context, snapshot) {
           List<ReusableReminderCard> _reminders = [];
           if (snapshot.hasData) {
-            Map<String, dynamic> remindersObj = snapshot.data;
+            DocumentSnapshot documents = snapshot.data;
+            Map<String, dynamic> remindersObj = documents.data()['reminders'];
             remindersObj.forEach((time, obj) {
               _reminders.add(ReusableReminderCard(
                 time: time,
                 amount: obj['amount'],
                 isAm: isAm(time),
                 isAlarm: obj['isAlarm'],
+                isMetric: documents.data()['isMetric'],
               ));
             });
 
             _reminders = bubbleSort(_reminders);
-          }
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: navBarBlue,
-              toolbarHeight: appBarHeight,
-            ),
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Column(
-                            children: [
-                              StatefulBuilder(
-                                builder: (context, setState) {
-                                  return CupertinoSwitch(
-                                      value: isMetric,
-                                      onChanged: (bool value) {
-                                        setState(() {
-                                          isMetric = !isMetric;
-                                        });
-                                      });
-                                },
-                              ),
-                              Text("${isMetric ? 'Metric' : 'Imperial'}")
-                            ],
-                          ),
-                        ],
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: _reminders,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Row(
+            return Scaffold(
+              // appBar: AppBar(
+              //   backgroundColor: navBarBlue,
+              //   toolbarHeight: appBarHeight,
+              // ),
+              body: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            FloatingActionButton(
-                              backgroundColor: Color(0xff88BDBC),
-                              onPressed: () {
-                                return showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return _addReminderDialog(
-                                          context, screenWidth, _db);
-                                    });
-                              },
-                              child: Icon(Icons.add),
+                            Column(
+                              children: [
+                                StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return CupertinoSwitch(
+                                        value: documents.data()['isMetric'],
+                                        onChanged: (bool value) {
+                                          setState(() {
+                                            _db.updateMeasurement(value);
+                                          });
+                                        });
+                                  },
+                                ),
+                                Text("${isMetric ? 'Metric' : 'Imperial'}")
+                              ],
                             ),
                           ],
                         ),
-                      )
-                    ]),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: _reminders,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              FloatingActionButton(
+                                backgroundColor: Color(0xff88BDBC),
+                                onPressed: () {
+                                  return showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return _addReminderDialog(
+                                            context, screenWidth, _db);
+                                      });
+                                },
+                                child: Icon(Icons.add),
+                              ),
+                            ],
+                          ),
+                        )
+                      ]),
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            return Scaffold(
+              body: Container(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            );
+          }
         });
   }
 }

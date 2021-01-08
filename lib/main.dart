@@ -38,29 +38,28 @@ class MyApp extends StatelessWidget {
       future: Firebase.initializeApp(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Text("Error");
+          print('error');
         }
-        if (snapshot.connectionState == ConnectionState.done) {
+        if (snapshot.hasData) {
           return MaterialApp(
-            title: 'Flutter Demo',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               fontFamily: 'Roboto',
-              primarySwatch: Colors.green,
-              // This makes the visual density adapt to the platform that you run
-              // the app on. For desktop platforms, the controls will be smaller and
-              // closer together (more dense) than on mobile platforms.
               visualDensity: VisualDensity.adaptivePlatformDensity,
             ),
             initialRoute: "/",
             routes: {
               "/": (context) => LandingScreen(),
               "nav": (context) => Navigations(),
-             
             },
           );
+        } else {
+          return Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
-        return Text("Loading");
       },
     );
   }

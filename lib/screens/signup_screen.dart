@@ -1,7 +1,10 @@
+import 'package:fil/screens/navigations.dart';
 import 'package:fil/services/auth.dart';
 import 'package:fil/services/validations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 class Signup extends StatefulWidget {
   @override
@@ -17,6 +20,13 @@ class _SignupState extends State<Signup> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void dispose() {
+    super.dispose();
+    _emailInput.dispose();
+    _passwordInput.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -30,7 +40,7 @@ class _SignupState extends State<Signup> {
             children: [
               Padding(
                 padding: EdgeInsets.only(top: 60),
-                child: Image.asset("images/logo.png"),
+                child: SvgPicture.asset("images/logo.svg"),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 60.0, horizontal: 20),
@@ -41,8 +51,9 @@ class _SignupState extends State<Signup> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         child: TextFormField(
-                          autofocus: true,
                           validator: (val) => validateEmail(val),
+                             enableSuggestions: false,
+                          autocorrect: false,
                           decoration: InputDecoration(
                             labelText: "Enter your Email",
                           ),
@@ -53,6 +64,9 @@ class _SignupState extends State<Signup> {
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: TextFormField(
                           validator: (val) => validatePassword(val),
+                             enableSuggestions: false,
+                          autocorrect: false,
+                          obscureText: true,
                           decoration: InputDecoration(
                             labelText: "Enter your Password",
                           ),
@@ -60,17 +74,19 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
+                        padding: const EdgeInsets.only(top: 16.0),
                         child: CupertinoButton(
                             color: Colors.blueAccent,
                             child: Text("Sign Up"),
                             onPressed: () async {
                               if (_formKey.currentState.validate()) {
-                                dynamic result = await _auth.signUp(
+                                User user = await _auth.signUp(
                                     _emailInput.text, _passwordInput.text);
-                                if (result) {
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //     builder: (context) => Dashboard(result)));
+                                if (user != null) {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => Navigations(
+                                            uid: user.uid,
+                                          )));
                                 } else {
                                   return showDialog(
                                     context: context,

@@ -10,8 +10,6 @@ class DatabaseService with ChangeNotifier {
   //collection reference
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection("users");
-  final CollectionReference userDailyIntakesCollection =
-      FirebaseFirestore.instance.collection("dailyIntakes");
   final CollectionReference markerCollection =
       FirebaseFirestore.instance.collection("markers");
 
@@ -28,6 +26,11 @@ class DatabaseService with ChangeNotifier {
     return this.uid;
   }
 
+  // Update measurement system
+  Future updateMeasurement(bool value) {
+    return userCollection.doc(uid).update({"isMetric": value});
+  }
+
   // final String uid;
 
   Stream<UserObj> queryUserData() {
@@ -38,6 +41,7 @@ class DatabaseService with ChangeNotifier {
           snapshot.data()['dailyGoal'],
           snapshot.data()['dailyIntake'],
           snapshot.data()['email'],
+          snapshot.data()['isMetric'],
           snapshot.data()['recipeFavs'],
           snapshot.data()['reminders'],
           snapshot.data()['uid']);
@@ -45,27 +49,21 @@ class DatabaseService with ChangeNotifier {
   }
 
   // creates a new daily entry list
-  Future createNewEntry(
-      String uid, String now, Map<String, dynamic> obj) async {
-    obj[now] = {};
-    userDailyIntakesCollection.doc(uid).set(obj);
-  }
-
-  Future checkCurrentDate(String uid, String now) async {
-    DocumentSnapshot query = await userDailyIntakesCollection.doc(uid).get();
-    if (!query.data().containsKey(now)) {
-      createNewEntry(uid, now, query.data());
-    }
+  Future createNewEntry(String now) async {
+    userCollection.doc(uid).update({'dailyIntake.$now': []});
   }
 
   // create user data in the firestore db
   Future createUserData(String uid, String email, creationTime) async {
     return await userCollection.doc(uid).set({
-      "uid": uid,
-      "email": email,
       "creationTime": creationTime,
-      "dailyGoal": 0,
-      "dailyIntake": 0
+      "dailyGoal": "3000",
+      "dailyIntake": {},
+      "email": email,
+      "isMetric": true,
+      "recipeFavs": [],
+      "reminders": {},
+      "uid": uid,
     });
   }
 
@@ -85,8 +83,10 @@ class DatabaseService with ChangeNotifier {
   }
 
   Future queryUserEmail(String email) async {
-    dynamic query = userCollection.where("email", isEqualTo: email);
-    if (query != null) {
+    print('query email is $email');
+    QuerySnapshot query =
+        await userCollection.where("email", isEqualTo: email).get();
+    if (query.docs.length > 0) {
       return true;
     }
     return false;
@@ -98,17 +98,15 @@ class DatabaseService with ChangeNotifier {
   }
 
   // updates to user daily intake
-  void addIntake(int value) {
+  void addIntake(int value, String now) {
     userCollection.doc(uid).update({
-      "dailyIntake": FieldValue.arrayUnion([value.toString()])
+      "dailyIntake.$now": FieldValue.arrayUnion([value.toString()])
     });
   }
 
   // retrieves the user's reminders
-  Stream<Map<String, dynamic>> queryReminders() {
-    return userCollection.doc(uid).snapshots().map((snapshot) {
-      return snapshot.data()['reminders'];
-    });
+  Stream<DocumentSnapshot> queryReminders() {
+    return userCollection.doc(uid).snapshots();
   }
 
   // add a new reminder
@@ -195,7 +193,7 @@ class DatabaseService with ChangeNotifier {
 
   // Update the user favourite recipe
   void updateFavRecipe(String id, String operation) {
-    if (operation == 'delete') {
+    if (operation == 'dislike') {
       userCollection.doc(uid).update({
         "recipeFavs": FieldValue.arrayRemove([id])
       });

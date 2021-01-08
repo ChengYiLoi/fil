@@ -4,6 +4,8 @@ import 'package:fil/services/auth.dart';
 import 'package:fil/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../constants.dart';
@@ -36,61 +38,61 @@ class _NavigationsState extends State<Navigations> {
         label: "Dashboard",
         activeIcon: Padding(
           padding: navIconPadding,
-          child: NavbarIcon(
-            url: "images/graph.png",
-            navBarColor: navBarBlue,
+          child: SvgPicture.asset(
+            "images/graph.svg",
+            color: navBarBlue,
           ),
         ),
         icon: Padding(
           padding: navIconPadding,
-          child: NavbarIcon(
-            url: "images/graph.png",
-            navBarColor: navBarGrey,
+          child: SvgPicture.asset(
+            "images/graph.svg",
+            color: navBarGrey,
           ),
         )),
     BottomNavigationBarItem(
         label: "Reminders",
         activeIcon: Padding(
           padding: navIconPadding,
-          child: NavbarIcon(
-            url: "images/reminder.png",
-            navBarColor: navBarBlue,
+          child: SvgPicture.asset(
+            "images/reminder.svg",
+            color: navBarBlue,
           ),
         ),
         icon: Padding(
           padding: navIconPadding,
-          child: NavbarIcon(
-            url: "images/reminder.png",
-            navBarColor: navBarGrey,
+          child: SvgPicture.asset(
+             "images/reminder.svg",
+            color: navBarGrey,
           ),
         )),
     BottomNavigationBarItem(
         label: "Map",
         activeIcon: Padding(
           padding: navIconPadding,
-          child: NavbarIcon(
-            url: "images/map.png",
-            navBarColor: navBarBlue,
+          child: SvgPicture.asset(
+            "images/map.svg",
+            color: navBarBlue,
           ),
         ),
         icon: Padding(
           padding: navIconPadding,
-          child: NavbarIcon(
-            url: "images/map.png",
-            navBarColor: navBarGrey,
+          child:  SvgPicture.asset(
+            "images/map.svg",
+            color: navBarGrey,
           ),
         )),
     BottomNavigationBarItem(
       label: "Recepies",
       activeIcon: Padding(
         padding: navIconPadding,
-        child: NavbarIcon(url: "images/recepie.png", navBarColor: navBarBlue),
+        child: SvgPicture.asset( "images/recipe.svg", color: navBarBlue),
       ),
       icon: Padding(
         padding: navIconPadding,
-        child: NavbarIcon(
-          url: "images/recepie.png",
-          navBarColor: navBarGrey,
+        child: SvgPicture.asset(
+          "images/recipe.svg",
+          color: navBarGrey,
         ),
       ),
     ),
@@ -98,9 +100,7 @@ class _NavigationsState extends State<Navigations> {
       label: "Logout",
       icon: Padding(
         padding: navIconPadding,
-        child: NavbarIcon(
-          url: "images/logout.png",
-        ),
+        child: SvgPicture.asset('images/logout.svg')
       ),
     ),
   ];
@@ -118,6 +118,8 @@ class _NavigationsState extends State<Navigations> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(

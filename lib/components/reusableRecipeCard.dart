@@ -64,10 +64,19 @@ class _RecipeCardState extends State<RecipeCard> {
         Navigator.of(context).push(
           PageRouteBuilder(
             transitionDuration: Duration(milliseconds: 500),
-            pageBuilder: (_, __, ___) => RecipeScreen(
-              recipe: widget.recipeObj,
-              id: widget.id,
-              imageUrl: imageUrl,
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                ChangeNotifierProvider.value(
+              value: _db,
+              child: RecipeScreen(
+                  recipe: widget.recipeObj,
+                  id: widget.id,
+                  imageUrl: imageUrl,
+                  isFav: isFavIcon,
+                  onFavChange: () {
+                    setState(() {
+                      isFavIcon = !isFavIcon;
+                    });
+                  }),
             ),
           ),
         );
@@ -121,9 +130,9 @@ class _RecipeCardState extends State<RecipeCard> {
                         child: GestureDetector(
                           onTap: () {
                             setState(() {
-                              String operation = 'add';
+                              String operation = 'like';
                               if (isFavIcon) {
-                                operation = 'delete';
+                                operation = 'dislike';
                               }
                               isFavIcon = !isFavIcon;
                               _db.updateFavRecipe(widget.id, operation);

@@ -79,6 +79,12 @@ class _AddMarkerFormState extends State<AddMarkerForm> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       contentPadding: EdgeInsets.all(10),
@@ -138,17 +144,22 @@ class _AddMarkerFormState extends State<AddMarkerForm> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: buttonOrange,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 16.0, horizontal: 34),
-                        child: Text(
-                          "Cancel",
-                          style: popupButtonTextStyle,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: buttonOrange,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 16.0, horizontal: 34),
+                          child: Text(
+                            "Cancel",
+                            style: popupButtonTextStyle,
+                          ),
                         ),
                       ),
                     ),

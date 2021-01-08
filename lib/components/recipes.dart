@@ -120,9 +120,13 @@ class _RecipesState extends State<Recipes> {
               body: SingleChildScrollView(
                 controller: _controller,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Wrap(
-                      children: _cards,
+                    Align(
+                      alignment: Alignment.center,
+                      child: Wrap(
+                        children: _cards,
+                      ),
                     ),
                     isLoading
                         ? Padding(

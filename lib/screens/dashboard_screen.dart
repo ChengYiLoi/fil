@@ -4,6 +4,7 @@ import 'package:fil/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fil/constants.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -14,9 +15,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  bool isMetric = true;
   DateTime current = new DateTime.now();
-
   String getMonth(obj) {
     List months = [
       "Jan",
@@ -36,8 +35,8 @@ class _DashboardState extends State<Dashboard> {
   }
 
   String dailyRemainder(UserObj user) {
-    int dailyGoal = int.parse(user.daily_goal);
-    int dailyIntake = int.parse(user.daily_intake);
+    int dailyGoal = int.parse(user.dailyGoal);
+    int dailyIntake = int.parse(user.getDailyIntake());
     int remainder;
     if (dailyGoal >= dailyIntake) {
       remainder = dailyGoal - dailyIntake;
@@ -54,6 +53,7 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     final DatabaseService _db =
         Provider.of<DatabaseService>(context, listen: false);
+    final double conversion = 29.574;
     return StreamBuilder(
       // widget.userInfo.user.uid
       stream: _db.queryUserData(),
@@ -62,13 +62,11 @@ class _DashboardState extends State<Dashboard> {
           UserObj _userObj = snapshot.data;
           final DateFormat formatter = DateFormat("yyyy-MM-dd");
           String now = formatter.format(DateTime.now());
-          _db.checkCurrentDate(_userObj.userID, now);
+          if (!_userObj.dailyIntake.containsKey(now)) {
+            _db.createNewEntry(now);
+          }
 
           return Scaffold(
-            appBar: AppBar(
-              backgroundColor: navBarBlue,
-              toolbarHeight: appBarHeight,
-            ),
             body: SafeArea(
                 child: Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
@@ -85,13 +83,13 @@ class _DashboardState extends State<Dashboard> {
                       Column(
                         children: [
                           CupertinoSwitch(
-                              value: isMetric,
+                              value: _userObj.isMetric,
                               onChanged: (bool value) {
                                 setState(() {
-                                  isMetric = !isMetric;
+                                  _db.updateMeasurement(value);
                                 });
                               }),
-                          Text("${isMetric ? 'Metric' : 'Imperial'}")
+                          Text("${_userObj.isMetric ? 'Metric' : 'Imperial'}")
                         ],
                       )
                     ],
@@ -102,9 +100,9 @@ class _DashboardState extends State<Dashboard> {
                       animation: true,
                       radius: 260.0,
                       lineWidth: 26.0,
-                      percent: _userObj.remainder,
+                      percent: _userObj.getRemainder(),
                       center: Text(
-                        "${(_userObj.remainder * 100).round().toString()}%",
+                        "${(_userObj.getRemainder() * 100).round().toString()}%",
                         style: TextStyle(fontSize: 30),
                       ),
                       progressColor: Color(0xFF8FC1E3),
@@ -125,7 +123,7 @@ class _DashboardState extends State<Dashboard> {
                                 textAlign: TextAlign.start,
                               ),
                               Text(
-                                "${_userObj.daily_goal} ${isMetric ? "ml" : "oz"}",
+                                "${(int.parse(_userObj.dailyGoal) / (_userObj.isMetric ? 1 : conversion)).round()} ${_userObj.isMetric ? "ml" : "oz"}",
                                 style: progressFontStyle.copyWith(
                                     color: progressBlue),
                               )
@@ -153,7 +151,7 @@ class _DashboardState extends State<Dashboard> {
                                 textAlign: TextAlign.start,
                               ),
                               Text(
-                                "${dailyRemainder(_userObj)} ${isMetric ? "ml" : "oz"}",
+                                "${(int.parse(dailyRemainder(_userObj)) / (_userObj.isMetric ? 1 : conversion)).round()} ${_userObj.isMetric ? "ml" : "oz"}",
                                 style: progressFontStyle.copyWith(
                                     color: progressBlue),
                               )
@@ -191,7 +189,7 @@ class _DashboardState extends State<Dashboard> {
                         borderRadius: BorderRadius.circular(50.0),
                         padding: EdgeInsets.symmetric(
                             vertical: 16.0, horizontal: 16.0),
-                        child: Image.asset("images/cup.png"),
+                        child: SvgPicture.asset("images/cup.svg"),
                         color: Color(0xff88BDBC),
                         onPressed: () {
                           return showDialog(
