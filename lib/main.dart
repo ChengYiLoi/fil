@@ -55,8 +55,9 @@ class MyApp extends StatelessWidget {
           );
         } else {
           return Container(
+            color: Colors.white,
             child: Center(
-              child: CircularProgressIndicator(),
+              child: SizedBox(),
             ),
           );
         }

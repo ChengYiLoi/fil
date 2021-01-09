@@ -63,6 +63,7 @@ class _DashboardState extends State<Dashboard> {
           final DateFormat formatter = DateFormat("yyyy-MM-dd");
           String now = formatter.format(DateTime.now());
           if (!_userObj.dailyIntake.containsKey(now)) {
+            print('current date does not have entry');
             _db.createNewEntry(now);
           }
 
@@ -178,6 +179,7 @@ class _DashboardState extends State<Dashboard> {
                                   value: _db,
                                   child: ReusableAlertBox(
                                     type: "edit",
+                                    isMetric: _userObj.isMetric,
                                   ),
                                 );
                               });
@@ -197,7 +199,7 @@ class _DashboardState extends State<Dashboard> {
                               builder: (context) {
                                 return ChangeNotifierProvider.value(
                                     value: _db,
-                                    child: ReusableAlertBox(type: "update"));
+                                    child: ReusableAlertBox(type: "update", isMetric: _userObj.isMetric,));
                               });
                         }),
                   )

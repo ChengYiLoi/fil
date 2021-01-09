@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 class ReusableAlertBox extends StatefulWidget {
   const ReusableAlertBox({
     @required this.type,
+    @required this.isMetric,
     Key key,
   }) : super(key: key);
   final String type;
+  final bool isMetric;
 
   @override
   _ReusableAlertBoxState createState() => _ReusableAlertBoxState();
@@ -33,19 +35,19 @@ class _ReusableAlertBoxState extends State<ReusableAlertBox> {
                     onTap: () {
                       setState(() {
                         if (amount > 0) {
-                          amount -= 50;
+                          amount -= widget.isMetric ? 50 : 1;
                         }
                       });
                     },
                     child: MinusButton()),
                 Text(
-                  "${amount.toString()}ml",
+                  "${amount.toString()} ${widget.isMetric ? "ml" : "oz"}",
                   style: TextStyle(fontSize: 24),
                 ),
                 GestureDetector(
                     onTap: () {
                       setState(() {
-                        amount += 50;
+                        amount += widget.isMetric ? 50 : 1;
                       });
                     },
                     child: AddButton())

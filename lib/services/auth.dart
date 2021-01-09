@@ -8,6 +8,7 @@ class AuthService {
 
   GoogleSignIn _googleSignIn = GoogleSignIn();
 
+
   // Check if user has already signed in
   StreamSubscription isUserSignedIn() {
     return _auth.userChanges().listen((User user) {

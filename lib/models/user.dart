@@ -26,11 +26,13 @@ class UserObj {
     int total = 0;
     DateFormat formatter = DateFormat("yyyy-MM-dd");
     String now = formatter.format(DateTime.now());
-    dailyIntake[now].forEach((amount) {
-      if (amount != "") {
-        total += int.parse(amount);
-      }
-    });
+    if (dailyIntake[now] != null) {
+      dailyIntake[now].forEach((amount) {
+        if (amount != "") {
+          total += int.parse(amount);
+        }
+      });
+    }
     return total.toString();
   }
 
