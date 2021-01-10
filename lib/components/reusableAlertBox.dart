@@ -18,7 +18,21 @@ class ReusableAlertBox extends StatefulWidget {
 }
 
 class _ReusableAlertBoxState extends State<ReusableAlertBox> {
-  int amount = 0;
+  TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+    _controller.text = "0";
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -31,34 +45,54 @@ class _ReusableAlertBoxState extends State<ReusableAlertBox> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (amount > 0) {
-                          amount -= widget.isMetric ? 50 : 1;
-                        }
-                      });
-                    },
-                    child: MinusButton()),
-                Text(
-                  "${amount.toString()} ${widget.isMetric ? "ml" : "oz"}",
-                  style: TextStyle(fontSize: 24),
+                Expanded(
+                  flex: 2,
+                  child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (int.parse(_controller.text) > 0) {
+                            _controller.text = (int.parse(_controller.text) -
+                                    (widget.isMetric ? 50 : 1))
+                                .toString();
+                          }
+                        });
+                      },
+                      child: MinusButton()),
                 ),
-                GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        amount += widget.isMetric ? 50 : 1;
-                      });
-                    },
-                    child: AddButton())
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          style: TextStyle(
+                              decoration: TextDecoration.none, fontSize: 20),
+                          controller: _controller,
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                      Text("${widget.isMetric ? 'ml' : 'oz'}")
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _controller.text = (int.parse(_controller.text) +
+                                  (widget.isMetric ? 50 : 1))
+                              .toString();
+                        });
+                      },
+                      child: AddButton()),
+                )
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: widget.type == "edit"
-                  ? EditGoalOptions(amount: amount)
-                  : RecordGoalOptions(amount: amount),
-            )
+                padding: const EdgeInsets.only(top: 16.0),
+                child: widget.type == "edit"
+                    ? EditGoalOptions(amount: int.parse(_controller.text))
+                    : RecordGoalOptions(amount: int.parse(_controller.text)))
           ],
         ),
       ),

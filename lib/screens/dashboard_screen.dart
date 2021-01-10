@@ -68,6 +68,7 @@ class _DashboardState extends State<Dashboard> {
           }
 
           return Scaffold(
+            resizeToAvoidBottomInset: false,
             body: SafeArea(
                 child: Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),

@@ -170,11 +170,16 @@ class _RemindersState extends State<Reminders> {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.only(top: 8.0),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: _reminders,
-                              ),
-                            ),
+                            child: _reminders.length == 0
+                                ? Center(
+                                    child:
+                                        Text('You do not have any reminders'),
+                                  )
+                                : SingleChildScrollView(
+                                    child: Column(
+                                      children: _reminders,
+                                    ),
+                                  ),
                           ),
                         ),
                         Padding(

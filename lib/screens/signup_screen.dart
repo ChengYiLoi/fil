@@ -14,10 +14,17 @@ class Signup extends StatefulWidget {
 class _SignupState extends State<Signup> {
   TextEditingController _emailInput = TextEditingController();
   TextEditingController _passwordInput = TextEditingController();
+  bool isLoading;
 
   AuthService _auth = AuthService();
 
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    isLoading = false;
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -52,7 +59,7 @@ class _SignupState extends State<Signup> {
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                         child: TextFormField(
                           validator: (val) => validateEmail(val),
-                             enableSuggestions: false,
+                          enableSuggestions: false,
                           autocorrect: false,
                           decoration: InputDecoration(
                             labelText: "Enter your Email",
@@ -64,7 +71,7 @@ class _SignupState extends State<Signup> {
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: TextFormField(
                           validator: (val) => validatePassword(val),
-                             enableSuggestions: false,
+                          enableSuggestions: false,
                           autocorrect: false,
                           obscureText: true,
                           decoration: InputDecoration(
@@ -74,45 +81,63 @@ class _SignupState extends State<Signup> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 16.0),
-                        child: CupertinoButton(
-                            color: Colors.blueAccent,
-                            child: Text("Sign Up"),
-                            onPressed: () async {
-                              if (_formKey.currentState.validate()) {
-                                User user = await _auth.signUp(
-                                    _emailInput.text, _passwordInput.text);
-                                if (user != null) {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => Navigations(
-                                            uid: user.uid,
-                                          )));
-                                } else {
-                                  return showDialog(
-                                    context: context,
-                                    builder: (context) => CupertinoAlertDialog(
-                                      content:
-                                          Text("Email has already been used"),
-                                      actions: [
-                                        CupertinoDialogAction(
-                                          child: Text("Ok"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop(context);
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                  );
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Container(
+                          width: 190,
+                          height: 62,
+                          child: CupertinoButton(
+                              color: Colors.blueAccent,
+                              child: isLoading
+                                  ? CircularProgressIndicator(
+                                     valueColor:
+                                          AlwaysStoppedAnimation(Colors.white),
+                                  )
+                                  : Text("Sign Up"),
+                              onPressed: () async {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                if (_formKey.currentState.validate()) {
+                                  User user = await _auth.signUp(
+                                      _emailInput.text, _passwordInput.text);
+                                  if (user != null) {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => Navigations(
+                                                  uid: user.uid,
+                                                )));
+                                  } else {
+                                    return showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          CupertinoAlertDialog(
+                                        content:
+                                            Text("Email has already been used"),
+                                        actions: [
+                                          CupertinoDialogAction(
+                                            child: Text("Ok"),
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pop(context);
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  setState(() {
+                                    isLoading = false;
+                                  });
                                 }
-                              }
-                              // dynamic result = await _auth.(
-                              //     _emailInput.text, _passwordInput.text);
-                              // if (result == null) {
-                              //   print("Error signing in");
-                              // } else {
-                              //   print(result);
-                              // }
-                            }),
+                                // dynamic result = await _auth.(
+                                //     _emailInput.text, _passwordInput.text);
+                                // if (result == null) {
+                                //   print("Error signing in");
+                                // } else {
+                                //   print(result);
+                                // }
+                              }),
+                        ),
                       )
                     ],
                   ),

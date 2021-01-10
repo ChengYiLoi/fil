@@ -54,7 +54,7 @@ class _LandingScreenState extends State<LandingScreen> {
       precachePicture(
           ExactAssetPicture(SvgPicture.svgStringDecoder, 'images/waves.svg'),
           null),
-          Future.delayed(Duration(seconds: 2),(){})
+      Future.delayed(Duration(seconds: 2), () {})
     ]);
   }
 
