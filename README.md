@@ -12,7 +12,7 @@ A hydration tracking app built with Flutter.
 
 ![image](https://user-images.githubusercontent.com/28855654/104162130-fe809300-542e-11eb-9d46-682a281d3041.png)
 
-### Record daily intake <br/>
+### Record Daily Intake / Change Daily Goal <br/>
 
 ![image](https://user-images.githubusercontent.com/28855654/104162257-35ef3f80-542f-11eb-8dfe-30586d90908f.png)
 ![record_daily_intake](https://user-images.githubusercontent.com/28855654/104172727-abfba280-543f-11eb-977a-a3218ec051a1.gif)
@@ -30,5 +30,4 @@ A hydration tracking app built with Flutter.
 ![create_marker](https://user-images.githubusercontent.com/28855654/104176366-11e92980-5442-11eb-91d7-d985e9ce79ae.gif)
 
 ### Infused water recipes
-![Screenshot 2021-01-11 at 7 00 38 PM](https://user-images.githubusercontent.com/28855654/104176463-3fce6e00-5442-11eb-8497-f0854be175d0.png)
 ![recipe](https://user-images.githubusercontent.com/28855654/104176611-815f1900-5442-11eb-9866-b901309c1831.gif)
