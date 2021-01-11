@@ -16,7 +16,7 @@ A hydration tracking app built with Flutter.
 
 ![image](https://user-images.githubusercontent.com/28855654/104162257-35ef3f80-542f-11eb-8dfe-30586d90908f.png)
 ![record_daily_intake](https://user-images.githubusercontent.com/28855654/104172727-abfba280-543f-11eb-977a-a3218ec051a1.gif)
-![edit_goal](https://user-images.githubusercontent.com/28855654/104173253-74d9c100-5440-11eb-9bf2-2079e3258240.gif)
+![edit_goal](https://user-images.githubusercontent.com/28855654/104178154-d1d77600-5444-11eb-80d1-6739107ce0c4.gif)
 
 ### Create / Edit Reminders <br/>
 
