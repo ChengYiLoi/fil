@@ -19,12 +19,16 @@ class ReusableAlertBox extends StatefulWidget {
 
 class _ReusableAlertBoxState extends State<ReusableAlertBox> {
   TextEditingController _controller;
+  int amount;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _controller.text = "0";
+    _controller.text = "";
+    _controller.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -50,7 +54,8 @@ class _ReusableAlertBoxState extends State<ReusableAlertBox> {
                   child: GestureDetector(
                       onTap: () {
                         setState(() {
-                          if (int.parse(_controller.text) > 0) {
+                          if (_controller.text != '' &&
+                              int.parse(_controller.text) > 0) {
                             _controller.text = (int.parse(_controller.text) -
                                     (widget.isMetric ? 50 : 1))
                                 .toString();
@@ -65,7 +70,7 @@ class _ReusableAlertBoxState extends State<ReusableAlertBox> {
                       Expanded(
                         child: TextField(
                           style: TextStyle(
-                              decoration: TextDecoration.none, fontSize: 20),
+                              decoration: TextDecoration.none, fontSize: 16),
                           controller: _controller,
                           keyboardType: TextInputType.number,
                         ),
@@ -79,9 +84,13 @@ class _ReusableAlertBoxState extends State<ReusableAlertBox> {
                   child: GestureDetector(
                       onTap: () {
                         setState(() {
-                          _controller.text = (int.parse(_controller.text) +
-                                  (widget.isMetric ? 50 : 1))
-                              .toString();
+                          if (_controller.text == '') {
+                            _controller.text = widget.isMetric ? "50" : "1";
+                          } else {
+                            _controller.text = (int.parse(_controller.text) +
+                                    (widget.isMetric ? 50 : 1))
+                                .toString();
+                          }
                         });
                       },
                       child: AddButton()),
@@ -91,8 +100,14 @@ class _ReusableAlertBoxState extends State<ReusableAlertBox> {
             Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: widget.type == "edit"
-                    ? EditGoalOptions(amount: int.parse(_controller.text))
-                    : RecordGoalOptions(amount: int.parse(_controller.text)))
+                    ? EditGoalOptions(
+                        amount: _controller.text == ""
+                            ? 0
+                            : int.parse(_controller.text))
+                    : RecordGoalOptions(
+                        amount: _controller.text == ""
+                            ? 0
+                            : int.parse(_controller.text)))
           ],
         ),
       ),

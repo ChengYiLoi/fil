@@ -54,7 +54,7 @@ class RefillStationInfo extends StatelessWidget {
                           ? SizedBox()
                           : CachedNetworkImage(
                               imageUrl: imageUrl,
-                              fit: BoxFit.fitWidth,
+                              fit: BoxFit.cover,
                               width: 50,
                               height: 50,
                               placeholder: (context, _) => new Padding(

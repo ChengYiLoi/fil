@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 class EditGoalOptions extends StatelessWidget {
   const EditGoalOptions({
-    @required this.amount,
+     this.amount,
     Key key,
   }) : super(key: key);
   final int amount;

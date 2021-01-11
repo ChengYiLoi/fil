@@ -34,6 +34,7 @@ class RecordGoalOptions extends StatelessWidget {
         ),
         GestureDetector(
             onTap: () {
+              print(amount);
               _db.addIntake(amount, now);
               Navigator.of(context).pop();
             },

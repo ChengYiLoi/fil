@@ -14,17 +14,20 @@ class ImageViewer extends StatelessWidget {
         backgroundColor: Color(0xFF8FC1E3),
       ),
       body: SafeArea(
-        child: Container(
-          height: double.infinity,
-          width: double.infinity,
-          child: Hero(
-              tag: "stationImg",
-              child: CachedNetworkImage(
-                imageUrl: imgUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, _) => new CircularProgressIndicator(),
-                errorWidget: (context, _, __) => new Icon(Icons.error),
-              )),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            child: Center(
+              child: Hero(
+                  tag: "stationImg",
+                  child: CachedNetworkImage(
+                    imageUrl: imgUrl,
+                    fit: BoxFit.cover,
+                    placeholder: (context, _) => new CircularProgressIndicator(),
+                    errorWidget: (context, _, __) => new Icon(Icons.error),
+                  )),
+            ),
+          ),
         ),
       ),
     );

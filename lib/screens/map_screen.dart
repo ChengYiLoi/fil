@@ -104,19 +104,36 @@ class _MapScreenState extends State<MapScreen> {
             Reference ref = FirebaseStorage.instance
                 .ref()
                 .child("markerImages/${snapshot.id}");
-            await ref.getDownloadURL().then((String url) {
-              print('image url obtained');
-              print(url);
-              Future.delayed(Duration(milliseconds: 500), () {
-                setState(() {
-                  selectedMarker =
-                      LatLng(snapshot.data()['lat'], snapshot.data()['lng']);
-                  selectedMarkerDescription = snapshot.data()['description'];
-                  selectedMarkerImageUrl = url;
-                  infoWindowPosition = 70;
+            try {
+              await ref.getDownloadURL().then((String url) {
+                print('image url obtained');
+                print(url);
+                Future.delayed(Duration(milliseconds: 500), () {
+                  setState(() {
+                    selectedMarker =
+                        LatLng(snapshot.data()['lat'], snapshot.data()['lng']);
+                    selectedMarkerDescription = snapshot.data()['description'];
+                    selectedMarkerImageUrl = url;
+                    infoWindowPosition = 70;
+                  });
                 });
               });
-            });
+            } catch (e) {
+              ref = FirebaseStorage.instance
+                  .ref()
+                  .child("markerImages/noimage.png");
+              await ref.getDownloadURL().then((String url) {
+                Future.delayed(Duration(milliseconds: 500), () {
+                  setState(() {
+                    selectedMarker =
+                        LatLng(snapshot.data()['lat'], snapshot.data()['lng']);
+                    selectedMarkerDescription = snapshot.data()['description'];
+                    selectedMarkerImageUrl = url;
+                    infoWindowPosition = 70;
+                  });
+                });
+              });
+            }
           },
         ),
       );
@@ -229,8 +246,8 @@ class _MapScreenState extends State<MapScreen> {
                                 );
                               });
                           setState(() {
-                              _markers.removeWhere(
-                            (Marker marker) => marker.markerId.value == "temp");
+                            _markers.removeWhere((Marker marker) =>
+                                marker.markerId.value == "temp");
                             createMarkerinfoWindowPosition = -100;
                           });
                         },
