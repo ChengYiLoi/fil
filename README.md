@@ -2,6 +2,8 @@
 
 A hydration tracking app built with Flutter.
 
+This applications works with flutter version 1.22.4 and below.
+
 ## Features
 1) Track daily hydration with changeable daily goals
 2) Set and enable reminders for specified time to rehydrate
